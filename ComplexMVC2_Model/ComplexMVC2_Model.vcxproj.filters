@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Controller">
+      <UniqueIdentifier>{15565456-fa04-46d9-b36b-7173ffa687c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DataScope">
+      <UniqueIdentifier>{09cc520b-f4a3-42eb-89d8-2f0a04fe9966}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Model">
+      <UniqueIdentifier>{503b870a-dedc-4208-b8f8-062b5a3a9760}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Model\DAO">
+      <UniqueIdentifier>{31cb9a9a-528f-49b0-ab9f-034b6e01cd6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Model\QueryDefine">
+      <UniqueIdentifier>{ed619fef-86f8-4e01-b313-f74b781b0031}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Model\VO">
+      <UniqueIdentifier>{05fca08d-dd6d-4a92-b32c-b7ed81886f00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Service">
+      <UniqueIdentifier>{eddf6480-5491-4e97-bfef-16ce8ee02c59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Transaction">
+      <UniqueIdentifier>{40b0c616-8d12-4350-95af-5eb2c930cb69}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Control\DlgController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\DataScope\DataScope.h">
+      <Filter>DataScope</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\DataScope\DBDataKernel.h">
+      <Filter>DataScope</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\DataScope\RequestAttribute.h">
+      <Filter>DataScope</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\DataScope\SessionAttribute.h">
+      <Filter>DataScope</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\DlgModel.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\QueryDefine.h">
+      <Filter>Model\QueryDefine</Filter>
+    </ClInclude>
+    <ClInclude Include="Transaction\TransactionManager.h">
+      <Filter>Transaction</Filter>
+    </ClInclude>
+    <ClInclude Include="Transaction\TransactionProcess.h">
+      <Filter>Transaction</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\VO\TimerVo.h">
+      <Filter>Model\VO</Filter>
+    </ClInclude>
+    <ClInclude Include="commonInclude.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Service\TimerService.h">
+      <Filter>Service</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\DAO\TimerModelImp.h">
+      <Filter>Model\DAO</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Control\DlgController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\DataScope\DataScope.cpp">
+      <Filter>DataScope</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\DataScope\DBDataKernel.cpp">
+      <Filter>DataScope</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\DlgModel.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Transaction\TransactionProcess.cpp">
+      <Filter>Transaction</Filter>
+    </ClCompile>
+    <ClCompile Include="Service\TimerService.cpp">
+      <Filter>Service</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\DAO\TimerModelImp.cpp">
+      <Filter>Model\DAO</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ComplexMVC2_Model.rc">
+      <Filter>리소스 파일</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
