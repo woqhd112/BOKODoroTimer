@@ -9,6 +9,8 @@
 #define DB_MODULE_NANE "BOKODoroTimer.exe"
 #endif
 
+void PrepareStatementInsertSelectTimerTable();
+
 class DlgModel
 {
 public:

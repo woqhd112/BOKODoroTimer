@@ -39,6 +39,10 @@ END_MESSAGE_MAP()
 
 // CustomButton 메시지 처리기
 
+void CustomButton::SetAlignText(CMFCButton::AlignStyle align)
+{
+	this->m_nAlignStyle = align;
+}
 
 void CustomButton::Initialize(COLORREF color, FlatStyle style, CString strFontName /*= _T("고딕")*/, int nFontSize /*= 10*/, int nFontFlags /*= FW_NORMAL*/, CustomButtonType buttonType, CustomButtonEvent buttonEvent, bool buttonRgn)
 {
@@ -276,4 +280,9 @@ void CustomButton::OnLButtonUp(UINT nFlags, CPoint point)
 	}
 	
 	CMFCButton::OnLButtonUp(nFlags, point);
+}
+
+bool CustomButton::IsToggle() const
+{
+	return m_bClicked;
 }

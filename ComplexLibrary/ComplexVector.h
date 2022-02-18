@@ -24,7 +24,7 @@ namespace ComplexLibrary
 			m_size = 0;
 		}
 
-		ComplexVector(ComplexVector<T>& ptr)
+		ComplexVector(const ComplexVector<T>& ptr)
 			: m_head(nullptr)
 			, m_ptr(nullptr)
 			, m_size(0)
@@ -41,6 +41,27 @@ namespace ComplexLibrary
 			for (int i = 0; i < nPtr_capacity; i++)
 			{
 				m_ptr[i] = ptr.m_ptr[i];
+			}
+
+			iterator iter = iterator(ptr.m_head);
+			while (iter != iterator(nullptr))
+			{
+				ComplexNode<T>* newNode = new ComplexNode<T>;
+				newNode->value = ptr.m_head->value;
+
+				if (m_head == nullptr)
+					m_head = newNode;
+				else
+				{
+					ComplexNode<T>* cursor = m_head;
+					while (cursor->has_next())
+					{
+						cursor = cursor->next();
+					}
+					cursor->m_next = newNode;
+				}
+
+				iter++;
 			}
 
 			m_size = nPtr_size;
@@ -69,6 +90,22 @@ namespace ComplexLibrary
 			while (iter != list.end())
 			{
 				m_ptr[i] = *iter;
+
+				ComplexNode<T>* newNode = new ComplexNode<T>;
+				newNode->value = *iter;
+
+				if (m_head == nullptr)
+					m_head = newNode;
+				else
+				{
+					ComplexNode<T>* cursor = m_head;
+					while (cursor->has_next())
+					{
+						cursor = cursor->next();
+					}
+					cursor->m_next = newNode;
+				}
+
 				i++;
 				iter++;
 			}
@@ -178,6 +215,43 @@ namespace ComplexLibrary
 		iterator end() const
 		{
 			return iterator(nullptr);
+		}
+
+#pragma warning(disable:4553)
+		iterator find(T value)
+		{
+			if (m_size < 0)
+				throw ComplexIndexOutOfBoundsException("vector size is error.", "ComplexVector", "find");
+			else if (m_size == 0)
+				return iterator(nullptr);
+
+			int i = 0;
+			bool bFind = false;
+
+			ComplexNode<T>* copyHead = m_head;
+
+			while (copyHead != nullptr)
+			{
+				try
+				{
+					if (copyHead->value == value)
+					{
+						bFind = true;
+						break;
+					}
+				}
+				catch (...)
+				{
+					throw ComplexCriticalRuntimeException("vector equal operator of key was not defined.", "ComplexVector", "find");
+				}
+
+				copyHead = copyHead->m_next;
+			}
+
+			if (!bFind)
+				return end();
+
+			return iterator(copyHead);
 		}
 
 		void erase(iterator iter)
@@ -334,6 +408,27 @@ namespace ComplexLibrary
 				{
 					m_ptr[i] = other.m_ptr[i];
 				}
+
+				iterator iter = iterator(other.m_head);
+				while (iter != iterator(nullptr))
+				{
+					ComplexNode<T>* newNode = new ComplexNode<T>;
+					newNode->value = other.m_head->value;
+
+					if (m_head == nullptr)
+						m_head = newNode;
+					else
+					{
+						ComplexNode<T>* cursor = m_head;
+						while (cursor->has_next())
+						{
+							cursor = cursor->next();
+						}
+						cursor->m_next = newNode;
+					}
+
+					iter++;
+				}
 			}
 			return *this;
 		}
@@ -355,6 +450,22 @@ namespace ComplexLibrary
 			while (iter != list.end())
 			{
 				m_ptr[i] = *iter;
+
+				ComplexNode<T>* newNode = new ComplexNode<T>;
+				newNode->value = *iter;
+
+				if (m_head == nullptr)
+					m_head = newNode;
+				else
+				{
+					ComplexNode<T>* cursor = m_head;
+					while (cursor->has_next())
+					{
+						cursor = cursor->next();
+					}
+					cursor->m_next = newNode;
+				}
+
 				i++;
 				iter++;
 			}

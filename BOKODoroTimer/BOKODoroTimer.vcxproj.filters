@@ -91,6 +91,18 @@
     <ClInclude Include="BOKODoroTimerListDlg.h">
       <Filter>TimerList</Filter>
     </ClInclude>
+    <ClInclude Include="BOKOManager\DBManager\SelectTimerDBManager.h">
+      <Filter>Manager\DBManager</Filter>
+    </ClInclude>
+    <ClInclude Include="BOKOAddTimerName.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="BOKOTimerListCtrl.h">
+      <Filter>TimerList</Filter>
+    </ClInclude>
+    <ClInclude Include="UICustom\CustomScroll.h">
+      <Filter>UICustom</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BOKODoroTimer.cpp">
@@ -128,6 +140,18 @@
     </ClCompile>
     <ClCompile Include="BOKODoroTimerListDlg.cpp">
       <Filter>TimerList</Filter>
+    </ClCompile>
+    <ClCompile Include="BOKOManager\DBManager\SelectTimerDBManager.cpp">
+      <Filter>Manager\DBManager</Filter>
+    </ClCompile>
+    <ClCompile Include="BOKOAddTimerName.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="BOKOTimerListCtrl.cpp">
+      <Filter>TimerList</Filter>
+    </ClCompile>
+    <ClCompile Include="UICustom\CustomScroll.cpp">
+      <Filter>UICustom</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -168,6 +192,30 @@
     <Image Include="res\Main_Yellow.png">
       <Filter>리소스 파일</Filter>
     </Image>
+    <Image Include="res\NoneSound_Max.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\NoneSound_Min.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\Sound_Max.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\Sound_Min.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\NoneSound.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\Sound.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\pngwing.com.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\List.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Font Include="res\Font\DS-DIGIT.TTF">
@@ -176,5 +224,28 @@
     <Font Include="res\Font\잘풀리는하루 Medium.ttf">
       <Filter>리소스 파일</Filter>
     </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="res\Sound\all_end.wav">
+      <Filter>리소스 파일</Filter>
+    </Media>
+    <Media Include="res\Sound\refresh.wav">
+      <Filter>리소스 파일</Filter>
+    </Media>
+    <Media Include="res\Sound\refresh_start.wav">
+      <Filter>리소스 파일</Filter>
+    </Media>
+    <Media Include="res\Sound\rest.wav">
+      <Filter>리소스 파일</Filter>
+    </Media>
+    <Media Include="res\Sound\rest_start.wav">
+      <Filter>리소스 파일</Filter>
+    </Media>
+    <Media Include="res\Sound\work.wav">
+      <Filter>리소스 파일</Filter>
+    </Media>
+    <Media Include="res\Sound\work_start.wav">
+      <Filter>리소스 파일</Filter>
+    </Media>
   </ItemGroup>
 </Project>

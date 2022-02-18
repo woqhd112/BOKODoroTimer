@@ -45,6 +45,11 @@ public:
 		}
 	}
 
+	void SetSession(SelectTimerVO& in)
+	{
+		m_kernel->SetSelectTimer(in);
+	}
+
 	void GetSessionInt(int* out)
 	{
 		m_kernel->GetInt(out);
@@ -65,11 +70,17 @@ public:
 		m_kernel->GetTimerContainer(out);
 	}
 
+	void GetSession(SelectTimerVO* out)
+	{
+		m_kernel->GetSelectTimer(out);
+	}
+
 	void ResetSession()
 	{
 		m_kernel->ResetInt();
 		m_kernel->ResetString();
 		m_kernel->ResetTimer();
+		m_kernel->ResetSelectTimer();
 	}
 
 private:

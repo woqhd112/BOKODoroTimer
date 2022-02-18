@@ -45,6 +45,11 @@ public:
 		}
 	}
 
+	void SetRequestAttributes(SelectTimerVO& in)
+	{
+		m_kernel->SetSelectTimer(in);
+	}
+
 	void GetRequestInt(int* out)
 	{
 		m_kernel->GetInt(out);
@@ -67,6 +72,12 @@ public:
 	{
 		m_kernel->GetTimerContainer(out);
 		m_kernel->ResetTimer();
+	}
+
+	void GetRequestAttributes(SelectTimerVO* out)
+	{
+		m_kernel->GetSelectTimer(out);
+		m_kernel->ResetSelectTimer();
 	}
 
 

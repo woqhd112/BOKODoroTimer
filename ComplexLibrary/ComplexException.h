@@ -17,6 +17,7 @@ namespace ComplexLibrary
 			ET_XML_PARSE,
 			ET_NOT_FOUND,
 			ET_UNIDENTIFIABLE,
+			ET_CRITICAL_RUNTIME,
 		};
 
 	protected:
@@ -244,6 +245,29 @@ namespace ComplexLibrary
 		}
 
 		~ComplexUnIdentifiableException()
+		{
+
+		}
+
+	private:
+
+	};
+
+	class ComplexCriticalRuntimeException : public ComplexException
+	{
+	public:
+
+		ComplexCriticalRuntimeException(const char* explanation, const char* exceptionGenerateClassName, const char* exceptionGenerationFuncName, int exceptionGenerationLineNo = __LINE__)
+			: ComplexException(ET_UNIDENTIFIABLE)
+		{
+			m_exceptTitle = "CriticalRuntime";
+			m_exceptionMessage = explanation;
+			m_exceptionGenerationClaseName = exceptionGenerateClassName;
+			m_exceptionGenerationFuncName = exceptionGenerationFuncName;
+			m_exceptionGenarationLineNo = exceptionGenerationLineNo;
+		}
+
+		~ComplexCriticalRuntimeException()
 		{
 
 		}

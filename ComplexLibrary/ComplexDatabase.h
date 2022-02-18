@@ -33,6 +33,9 @@ UPDATE table_name SET ...;
 DELETE FROM table_name WHERE ...;
 -> ...에는 특정 칼럼의 값에대한 조건을 입력한다.
 
+SQLite 현재시간 입력
+-> datetime('now', 'localtime')
+
 */
 
 //#define SQLITE_OK           0   /* Successful result */

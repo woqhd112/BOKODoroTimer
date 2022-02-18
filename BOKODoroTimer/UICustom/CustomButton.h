@@ -26,14 +26,19 @@ public:
 
 	void Initialize(COLORREF color, FlatStyle style, CString strFontName = _T("고딕"), int nFontSize = 10, int nFontFlags = FW_NORMAL, CustomButtonType buttonType = CBT_DEFAULT, CustomButtonEvent buttonEvent = CBE_CLICK, bool buttonRgn = false);
 
+	void SetAlignText(CMFCButton::AlignStyle align);
+
 	void ResetClickButtonColor();
 	void ExecuteClickButtonColor();
+	bool IsToggle() const;
+
 	CustomButtonEvent m_buttonEvent;
+
+	bool m_bUseMouseBkGroundColorEvent;
 
 private:
 
 	bool m_bTrackMouse;
-	bool m_bUseMouseBkGroundColorEvent;
 	CustomButtonType m_buttonType;
 
 	CFont m_thisFont;

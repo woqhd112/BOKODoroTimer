@@ -52,6 +52,7 @@ bool TimerDBManager::UpdateTimerAutoIncrementSeq()
 
 bool TimerDBManager::InsertTimer(TimerVO& in_timerVO)
 {
+	m_inputTimerVO.SetTimerNAME(in_timerVO.GetTimerNAME());
 	m_inputTimerVO.SetWkHOUR(in_timerVO.GetWkHOUR());
 	m_inputTimerVO.SetWkMINUTE(in_timerVO.GetWkMINUTE());
 	m_inputTimerVO.SetWkSECOND(in_timerVO.GetWkSECOND());
@@ -64,6 +65,8 @@ bool TimerDBManager::InsertTimer(TimerVO& in_timerVO)
 	m_inputTimerVO.SetTimerSEQ(in_timerVO.GetTimerSEQ());
 	m_inputTimerVO.SetWrREPEAT(in_timerVO.GetWrREPEAT());
 	m_inputTimerVO.SetAllREPEAT(in_timerVO.GetAllREPEAT());
+	m_inputTimerVO.SetInfREPEAT(in_timerVO.GetInfREPEAT());
+	m_inputTimerVO.SetMuteSET(in_timerVO.GetMuteSET());
 
 	RequestScope->SetRequestAttributes(m_inputTimerVO);
 	m_inputTimerVO.Clear();
@@ -76,6 +79,7 @@ bool TimerDBManager::InsertTimer(TimerVO& in_timerVO)
 
 bool TimerDBManager::UpdateTimer(TimerVO& in_timerVO)
 {
+	m_inputTimerVO.SetTimerNAME(in_timerVO.GetTimerNAME());
 	m_inputTimerVO.SetWkHOUR(in_timerVO.GetWkHOUR());
 	m_inputTimerVO.SetWkMINUTE(in_timerVO.GetWkMINUTE());
 	m_inputTimerVO.SetWkSECOND(in_timerVO.GetWkSECOND());
@@ -87,6 +91,8 @@ bool TimerDBManager::UpdateTimer(TimerVO& in_timerVO)
 	m_inputTimerVO.SetRfSECOND(in_timerVO.GetRfSECOND());
 	m_inputTimerVO.SetWrREPEAT(in_timerVO.GetWrREPEAT());
 	m_inputTimerVO.SetAllREPEAT(in_timerVO.GetAllREPEAT());
+	m_inputTimerVO.SetInfREPEAT(in_timerVO.GetInfREPEAT());
+	m_inputTimerVO.SetMuteSET(in_timerVO.GetMuteSET());
 
 	RequestScope->SetRequestAttributes(m_inputTimerVO);
 	m_inputTimerVO.Clear();

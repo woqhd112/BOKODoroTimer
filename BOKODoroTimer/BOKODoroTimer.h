@@ -16,6 +16,7 @@
 #pragma comment(lib, "ComplexLibrary.lib")
 #endif
 #include "BOKOManager/DBManager/TimerDBManager.h"
+#include "BOKOManager/DBManager/SelectTimerDBManager.h"
 #include "BOKOManager/LOGManager/LogManager.h"
 #include "PreProcessorDefineConst.h"
 
@@ -24,6 +25,7 @@
 //
 
 static TimerDBManager* Timer_DB_Manager = ComplexSingleton<TimerDBManager>::GetInstancePtr();
+static SelectTimerDBManager* SelectTimer_DB_Manager = ComplexSingleton<SelectTimerDBManager>::GetInstancePtr();
 static LogManager* Log_Manager = ComplexSingleton<LogManager>::GetInstancePtr();
 
 class CBOKODoroTimerApp : public CWinApp

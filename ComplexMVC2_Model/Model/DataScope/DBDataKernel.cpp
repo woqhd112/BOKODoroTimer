@@ -26,6 +26,11 @@ void DBDataKernel::ResetTimer()
 	m_timerVOContainer.clear();
 }
 
+void DBDataKernel::ResetSelectTimer()
+{
+	m_selectTimer.SetSl(0);
+}
+
 void DBDataKernel::SetInt(int in_int)
 {
 	m_int = in_int;
@@ -40,6 +45,7 @@ void DBDataKernel::SetTimer(TimerVO& in)
 {
 	TimerVO timer;
 	timer.SetTimerSEQ(in.GetTimerSEQ());
+	timer.SetTimerNAME(in.GetTimerNAME());
 	timer.SetWkHOUR(in.GetWkHOUR());
 	timer.SetWkMINUTE(in.GetWkMINUTE());
 	timer.SetWkSECOND(in.GetWkSECOND());
@@ -51,13 +57,16 @@ void DBDataKernel::SetTimer(TimerVO& in)
 	timer.SetRfSECOND(in.GetRfSECOND());
 	timer.SetWrREPEAT(in.GetWrREPEAT());
 	timer.SetAllREPEAT(in.GetAllREPEAT());
+	timer.SetInfREPEAT(in.GetInfREPEAT());
+	timer.SetMuteSET(in.GetMuteSET());
 	m_timerVOContainer.push_back(timer);
 }
 
-void DBDataKernel::SetTimer(int timerSEQ, int wkHOUR, int wkMINUTE, int wkSECOND, int rsHOUR, int rsMINUTE, int rsSECOND, int rfHOUR, int rfMINUTE, int rfSECOND, int wrREPEAT, int allREPEAT)
+void DBDataKernel::SetTimer(int timerSEQ, ComplexString timerNAME, int wkHOUR, int wkMINUTE, int wkSECOND, int rsHOUR, int rsMINUTE, int rsSECOND, int rfHOUR, int rfMINUTE, int rfSECOND, int wrREPEAT, int allREPEAT, int infREPEAT, int muteSET)
 {
 	TimerVO timer;
 	timer.SetTimerSEQ(timerSEQ);
+	timer.SetTimerNAME(timerNAME);
 	timer.SetWkHOUR(wkHOUR);
 	timer.SetWkMINUTE(wkMINUTE);
 	timer.SetWkSECOND(wkSECOND);
@@ -69,7 +78,19 @@ void DBDataKernel::SetTimer(int timerSEQ, int wkHOUR, int wkMINUTE, int wkSECOND
 	timer.SetRfSECOND(rfSECOND);
 	timer.SetWrREPEAT(wrREPEAT);
 	timer.SetAllREPEAT(allREPEAT);
+	timer.SetInfREPEAT(infREPEAT);
+	timer.SetMuteSET(muteSET);
 	m_timerVOContainer.push_back(timer);
+}
+
+void DBDataKernel::SetSelectTimer(SelectTimerVO& in)
+{
+	m_selectTimer.SetSl(in.GetSl());
+}
+
+void DBDataKernel::SetSelectTimer(int sl)
+{
+	m_selectTimer.SetSl(sl);
 }
 
 void DBDataKernel::GetInt(int* out_int)
@@ -90,6 +111,7 @@ void DBDataKernel::GetTimer(TimerVO* out, int get_row_index)
 	if (out)
 	{
 		out->SetTimerSEQ(m_timerVOContainer.at(get_row_index).GetTimerSEQ());
+		out->SetTimerNAME(m_timerVOContainer.at(get_row_index).GetTimerNAME());
 		out->SetWkHOUR(m_timerVOContainer.at(get_row_index).GetWkHOUR());
 		out->SetWkMINUTE(m_timerVOContainer.at(get_row_index).GetWkMINUTE());
 		out->SetWkSECOND(m_timerVOContainer.at(get_row_index).GetWkSECOND());
@@ -101,16 +123,21 @@ void DBDataKernel::GetTimer(TimerVO* out, int get_row_index)
 		out->SetRfSECOND(m_timerVOContainer.at(get_row_index).GetRfSECOND());
 		out->SetWrREPEAT(m_timerVOContainer.at(get_row_index).GetWrREPEAT());
 		out->SetAllREPEAT(m_timerVOContainer.at(get_row_index).GetAllREPEAT());
+		out->SetInfREPEAT(m_timerVOContainer.at(get_row_index).GetInfREPEAT());
+		out->SetMuteSET(m_timerVOContainer.at(get_row_index).GetMuteSET());
 	}
 }
 
-void DBDataKernel::GetTimer(int* out_timerSEQ, int* out_wkHOUR, int* out_wkMINUTE, int* out_wkSECOND, int* out_rsHOUR, int* out_rsMINUTE, int* out_rsSECOND, int* out_rfHOUR, int* out_rfMINUTE, int* out_rfSECOND, int* out_wrREPEAT, int* out_allREPEAT, int get_row_index)
+void DBDataKernel::GetTimer(int* out_timerSEQ, ComplexString* out_timerNAME, int* out_wkHOUR, int* out_wkMINUTE, int* out_wkSECOND, int* out_rsHOUR, int* out_rsMINUTE, int* out_rsSECOND, int* out_rfHOUR, int* out_rfMINUTE, int* out_rfSECOND, int* out_wrREPEAT, int* out_allREPEAT, int* out_infREPEAT, int* out_muteSET, int get_row_index)
 {
 	if (m_timerVOContainer.empty())
 		return;
 
 	if (out_timerSEQ)
 		*out_timerSEQ = m_timerVOContainer.at(get_row_index).GetTimerSEQ();
+
+	if (out_timerNAME)
+		*out_timerNAME = m_timerVOContainer.at(get_row_index).GetTimerNAME();
 
 	if (out_wkHOUR)
 		*out_wkHOUR = m_timerVOContainer.at(get_row_index).GetWkHOUR();
@@ -137,6 +164,10 @@ void DBDataKernel::GetTimer(int* out_timerSEQ, int* out_wkHOUR, int* out_wkMINUT
 		*out_wrREPEAT = m_timerVOContainer.at(get_row_index).GetWrREPEAT();
 	if (out_allREPEAT)
 		*out_allREPEAT = m_timerVOContainer.at(get_row_index).GetAllREPEAT();
+	if (out_infREPEAT)
+		*out_infREPEAT = m_timerVOContainer.at(get_row_index).GetInfREPEAT();
+	if (out_muteSET)
+		*out_muteSET = m_timerVOContainer.at(get_row_index).GetMuteSET();
 }
 
 void DBDataKernel::GetTimerContainer(ComplexVector<TimerVO>* out_timerVOContainer)
@@ -149,6 +180,8 @@ void DBDataKernel::GetTimerContainer(ComplexVector<TimerVO>* out_timerVOContaine
 		{
 			TimerVO in_timer;
 			in_timer.SetTimerSEQ(iter->value.GetTimerSEQ());
+
+			in_timer.SetTimerNAME(iter->value.GetTimerNAME());
 
 			in_timer.SetWkHOUR(iter->value.GetWkHOUR());
 			in_timer.SetWkMINUTE(iter->value.GetWkMINUTE());
@@ -164,9 +197,27 @@ void DBDataKernel::GetTimerContainer(ComplexVector<TimerVO>* out_timerVOContaine
 
 			in_timer.SetWrREPEAT(iter->value.GetWrREPEAT());
 			in_timer.SetAllREPEAT(iter->value.GetAllREPEAT());
+			in_timer.SetInfREPEAT(iter->value.GetInfREPEAT());
+			in_timer.SetMuteSET(iter->value.GetMuteSET());
 
 			out_timerVOContainer->push_back(in_timer);
 			iter++;
 		}
+	}
+}
+
+void DBDataKernel::GetSelectTimer(SelectTimerVO* out)
+{
+	if (out)
+	{
+		out->SetSl(m_selectTimer.GetSl());
+	}
+}
+
+void DBDataKernel::GetSelectTimer(int* out_sl)
+{
+	if (out_sl)
+	{
+		*out_sl = m_selectTimer.GetSl();
 	}
 }

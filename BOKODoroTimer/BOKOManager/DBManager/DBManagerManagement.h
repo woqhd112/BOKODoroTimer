@@ -30,6 +30,7 @@ protected:
 	static DlgController* MVC_Controller;
 
 	TimerVO m_inputTimerVO;
+	SelectTimerVO m_inputSelectTimerVO;
 
 };
 

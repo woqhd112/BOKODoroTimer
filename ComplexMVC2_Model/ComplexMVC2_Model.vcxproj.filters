@@ -87,6 +87,15 @@
     <ClInclude Include="Model\DAO\TimerModelImp.h">
       <Filter>Model\DAO</Filter>
     </ClInclude>
+    <ClInclude Include="Model\VO\SelectTimerVo.h">
+      <Filter>Model\VO</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\DAO\SelectTimerModelImp.h">
+      <Filter>Model\DAO</Filter>
+    </ClInclude>
+    <ClInclude Include="Service\SelectTimerService.h">
+      <Filter>Service</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -115,6 +124,12 @@
     </ClCompile>
     <ClCompile Include="Model\DAO\TimerModelImp.cpp">
       <Filter>Model\DAO</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\DAO\SelectTimerModelImp.cpp">
+      <Filter>Model\DAO</Filter>
+    </ClCompile>
+    <ClCompile Include="Service\SelectTimerService.cpp">
+      <Filter>Service</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

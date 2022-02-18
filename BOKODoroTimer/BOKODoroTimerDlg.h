@@ -5,12 +5,16 @@
 #pragma once
 #include "BOKODoroTimerListDlg.h"
 
+#define TIMER_PROCESS_ID 1
+#define TIMER_SOUND_ID 2
+
 enum TimerState
 {
 	TMS_NONE = 0,
 	TMS_WORKING,
 	TMS_RESTING,
-	TMS_REFRESHING
+	TMS_REFRESHING,
+	TMS_STOP,
 };
 
 enum TimerStartState
@@ -20,9 +24,25 @@ enum TimerStartState
 	TSS_PAUSE = 2,
 };
 
+enum StartSoundState
+{
+	SSS_NONE = 0,
+	SSS_WORK,
+	SSS_REST,
+	SSS_REFRESH,
+	SSS_WORK_START,
+	SSS_REST_START,
+	SSS_REFRESH_START,
+	SSS_ALL_END,
+	SSS_BEEP,
+	SSS_BEEP_LAST,
+};
+
 // CBOKODoroTimerDlg 대화 상자
 class CBOKODoroTimerDlg : public CDialogEx, public DlgInterface
 {
+	friend class BOKODoroTimerListDlg;
+
 // 생성입니다.
 public:
 	CBOKODoroTimerDlg(CWnd* pParent = nullptr);	// 표준 생성자입니다.
@@ -42,6 +62,7 @@ public:
 
 private:
 
+	void ResetTimerTitle();
 	void ResetTimer();
 
 	void ClickTimeEditEvent(MSG* msg);
@@ -56,6 +77,18 @@ private:
 	void ResetWorkTimeUI();
 	void ResetRestTimeUI();
 	void ResetRefreshTimeUI();
+
+	void ViewChange();
+
+	bool ValidateTimeCheck(ComplexString& errMsg);
+	void TimerProcessPrecondition();
+
+	void ProcessTimer();
+	static UINT ProcessSound(LPVOID method);
+	void CustomRepeatProcess();
+	void InfiniteRepeatProcess();
+
+	void LoadSound(StartSoundState state);
 
 // 구현입니다.
 protected:
@@ -117,9 +150,17 @@ public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnBnClickedMfcbuttonExpandTimerList();
+	afx_msg void OnBnClickedMfcbuttonTimerSave();
+	afx_msg void OnBnClickedButtonSoundSetting();
+	afx_msg void OnBnClickedButtonNoneSoundSetting();
 	virtual void OnOK();
 
 private:
+
+	bool m_bStartProcessTimer;
+	bool m_bViewChange;
+	bool m_bStateChange;
+	CWinThread* m_soundThread;
 
 	BOKODoroTimerListDlg* m_pBOKODoroTimerListDlg;
 
@@ -130,9 +171,14 @@ private:
 
 	TimerState m_state;
 	TimerStartState m_startState;
+	StartSoundState m_soundState;
 
 	CFont m_radioFont;
 
+	CStatic m_group_repeat;
+	CStatic m_group_work;
+	CStatic m_group_rest;
+	CStatic m_group_refresh;
 	CustomStatic m_stt_repeat_setting;
 	CustomStatic m_stt_state;
 	CustomStatic m_stt_work_rest_repeat_set;
@@ -174,6 +220,9 @@ private:
 
 	CButton m_radio_infinite_repeat;
 	CButton m_radio_custom_setting;
+	CGdipButton m_btn_sound_setting;
+	CGdipButton m_btn_none_sound_setting;
+	CGdipButton m_btn_expand_timer_list;
 	CustomButton m_btn_work_hour_up;
 	CustomButton m_btn_work_hour_down;
 	CustomButton m_btn_work_minute_up;
@@ -195,5 +244,5 @@ private:
 	CustomButton m_btn_start;
 	CustomButton m_btn_stop;
 	CustomButton m_btn_reset;
-	CustomButton m_btn_expand_timer_list;
+	CustomButton m_btn_timer_save;
 };

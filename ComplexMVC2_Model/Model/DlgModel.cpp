@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "DlgModel.h"
 #include <windows.h>
+#include "File/FileProcess.h"
 
 static std::shared_ptr<ComplexDatabase> g_dbConnection;
 static std::shared_ptr<DBDataKernel> g_dataKernel;
@@ -21,6 +22,11 @@ ComplexDatabase* GetDBInstance()
 		g_dbConnection.reset(new ComplexDatabase);
 	}
 	return g_dbConnection.get();
+}
+
+void PrepareStatementInsertSelectTimerTable()
+{
+	DB_INSTANCE->SetInt(1, 0);
 }
 
 DlgModel::DlgModel()
@@ -54,7 +60,7 @@ void DlgModel::LoadDatabase()
 	folderName.AppendFormat("%s", "Config\\");
 	::CreateDirectoryA(folderName, NULL);
 
-	fileName = "md.db";
+	fileName = "bktimer.db";
 	fullPath = folderName + fileName;
 
 	// 폴더생성 처리...
@@ -64,12 +70,18 @@ void DlgModel::LoadDatabase()
 		bExist = true;
 	}
 
-	if (DB_INSTANCE->ConnectDatabase("../Workspace/Config/md.db"))
+	ComplexString ansiToUTF8;
+	ComplexUtilProcess::ANSIToUTF8(ansiToUTF8, fullPath);
+	
+	if (DB_INSTANCE->ConnectDatabase(ansiToUTF8))
 	{
 		DB_INSTANCE->ExecuteQuery(DefinedDDLQuerys[DELETE_CASCADE_ON], NULL);
 		if (!bExist)
 		{
 			DB_INSTANCE->ExecuteQuery(DefinedDDLQuerys[CREATE_TIMER_TABLE], NULL);
+			DB_INSTANCE->ExecuteQuery(DefinedDDLQuerys[CREATE_SELECT_TIMER_TABLE], NULL);
+			DB_INSTANCE->PrepareStatement_Execute(DefinedDMLQuerys[INSERT_SELECT_TIMER_TABLE], PrepareStatementInsertSelectTimerTable);
+			Commit();
 		}
 		// 트랜잭션 처리를 위해 주석
 		//g_dbConnection.SetAutoCommit(false);

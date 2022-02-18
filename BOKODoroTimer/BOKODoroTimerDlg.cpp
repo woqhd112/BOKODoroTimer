@@ -6,6 +6,7 @@
 #include "framework.h"
 #include "BOKODoroTimer.h"
 #include "BOKODoroTimerDlg.h"
+#include "BOKOAddTimerName.h"
 #include "afxdialogex.h"
 
 #ifdef _DEBUG
@@ -57,6 +58,9 @@ CBOKODoroTimerDlg::CBOKODoroTimerDlg(CWnd* pParent /*=nullptr*/)
 	Log_Manager->OnPutLog("BOKODoroTimerDlg 생성자 호출", LogType::LT_PROCESS);
 
 	m_pBOKODoroTimerListDlg = new BOKODoroTimerListDlg(this);
+	m_bStartProcessTimer = false;
+	m_bViewChange = false;
+	m_bStateChange = false;
 }
 
 CBOKODoroTimerDlg::~CBOKODoroTimerDlg()
@@ -137,6 +141,13 @@ void CBOKODoroTimerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_MFCBUTTON_STOP, m_btn_stop);
 	DDX_Control(pDX, IDC_MFCBUTTON_RESET, m_btn_reset);
 	DDX_Control(pDX, IDC_MFCBUTTON_EXPAND_TIMER_LIST, m_btn_expand_timer_list);
+	DDX_Control(pDX, IDC_STATIC_GROUP_WORK, m_group_work);
+	DDX_Control(pDX, IDC_STATIC_GROUP_REST, m_group_rest);
+	DDX_Control(pDX, IDC_STATIC_GROUP_REFRESH, m_group_refresh);
+	DDX_Control(pDX, IDC_STATIC_GROUP_REPEAT, m_group_repeat);
+	DDX_Control(pDX, IDC_MFCBUTTON_TIMER_SAVE, m_btn_timer_save);
+	DDX_Control(pDX, IDC_BUTTON_SOUND_SETTING, m_btn_sound_setting);
+	DDX_Control(pDX, IDC_BUTTON_NONE_SOUND_SETTING, m_btn_none_sound_setting);
 }
 
 BEGIN_MESSAGE_MAP(CBOKODoroTimerDlg, CDialogEx)
@@ -191,6 +202,9 @@ BEGIN_MESSAGE_MAP(CBOKODoroTimerDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT_ALL_REPEAT_SET, &CBOKODoroTimerDlg::OnEnChangeEditAllRepeatSet)
 	ON_WM_ERASEBKGND()
 	ON_BN_CLICKED(IDC_MFCBUTTON_EXPAND_TIMER_LIST, &CBOKODoroTimerDlg::OnBnClickedMfcbuttonExpandTimerList)
+	ON_BN_CLICKED(IDC_MFCBUTTON_TIMER_SAVE, &CBOKODoroTimerDlg::OnBnClickedMfcbuttonTimerSave)
+	ON_BN_CLICKED(IDC_BUTTON_SOUND_SETTING, &CBOKODoroTimerDlg::OnBnClickedButtonSoundSetting)
+	ON_BN_CLICKED(IDC_BUTTON_NONE_SOUND_SETTING, &CBOKODoroTimerDlg::OnBnClickedButtonNoneSoundSetting)
 END_MESSAGE_MAP()
 
 
@@ -400,9 +414,22 @@ void CBOKODoroTimerDlg::ResetTimer()
 {
 	m_state = TMS_NONE;
 	m_startState = TSS_STOP;
+	m_soundState = SSS_NONE;
 	m_edit_state.SetWindowTextA(STATE_TEXT_NONE);
 
 	SetTimeText(m_loadTimer);
+
+	// 음소거 설정값 확인하여 버튼 출력 유무 결정
+	if (m_loadTimer.GetMuteSET() == 0)
+	{
+		// 소리설정
+		OnBnClickedButtonNoneSoundSetting();
+	}
+	else
+	{
+		// 음소거설정
+		OnBnClickedButtonSoundSetting();
+	}
 }
 
 void CBOKODoroTimerDlg::SaveProcessTimer()
@@ -472,20 +499,36 @@ void CBOKODoroTimerDlg::LoadProcessTimer()
 
 void CBOKODoroTimerDlg::SaveDBTimer()
 {
-	// 타이머 저장 버튼 추가되면 그때 db작업하자
-	m_loadTimer = m_processTimer;
+	// 새이름 받아서 완료되면 저장하기
+	ComplexString strTimerName;
+	BOKOAddTimerName addTimerName(&strTimerName);
+	if (addTimerName.DoModal() == IDOK)
+	{
+		m_processTimer.SetTimerNAME(strTimerName);
+		m_loadTimer = m_processTimer;
 
-	// 새로저장인지 덮어쓰기인지 구분해서 insert, update 구분하기
+		m_pBOKODoroTimerListDlg->InsertTimer(m_loadTimer);
 
-	Log_Manager->OnPutLog("타이머 정보 저장 완료", LogType::LT_PROCESS);
+		ResetTimerTitle();
+
+		Log_Manager->OnPutLog("타이머 정보 저장 완료", LogType::LT_PROCESS);
+	}
 }
 
 void CBOKODoroTimerDlg::LoadDBTimer()
 {
-	// 타이머 로드 버튼 추가되면 이 함수 호출
-
 	// 자주쓰는 타이머 설정한것 불러오기..
 	int timerSEQ = 0;
+
+	SelectTimerVO selectTimer;
+	if (SelectTimer_DB_Manager->SelectAllSelectTimer(&selectTimer) == false)
+	{
+		Log_Manager->OnPutLog("타이머 정보 로드 오류", LogType::LT_PROCESS);
+		AfxMessageBox("타이머 정보 로드 오류");
+		exit(0);
+	}
+
+	timerSEQ = selectTimer.GetSl();
 	if (Timer_DB_Manager->SelectOneTimer(timerSEQ, &m_loadTimer) == false)
 	{
 		Log_Manager->OnPutLog("타이머 정보 로드 오류", LogType::LT_PROCESS);
@@ -493,7 +536,7 @@ void CBOKODoroTimerDlg::LoadDBTimer()
 		exit(0);
 	}
 
-	Log_Manager->OnPutLog("타이머 정보 로드 완료", LogType::LT_PROCESS);
+	Log_Manager->OnPutLog("선택한 타이머 정보 로드 성공", LogType::LT_PROCESS);
 }
 
 void CBOKODoroTimerDlg::StartWithEnableUI(BOOL enable)
@@ -539,6 +582,9 @@ void CBOKODoroTimerDlg::StartWithEnableUI(BOOL enable)
 	m_btn_refresh_second_down.EnableWindow(enable);
 
 	m_btn_reset.EnableWindow(enable);
+	m_btn_timer_save.EnableWindow(enable);
+
+	m_pBOKODoroTimerListDlg->StartWithEnableUI(enable);
 }
 
 void CBOKODoroTimerDlg::ResetWorkTimeUI()
@@ -662,6 +708,18 @@ void CBOKODoroTimerDlg::Initialize()
 	// 버튼 초기화
 	SetWindowTheme(m_radio_infinite_repeat, LPCWSTR(""), LPCWSTR(""));
 	SetWindowTheme(m_radio_custom_setting, LPCWSTR(""), LPCWSTR(""));
+	m_btn_sound_setting.LoadStdImage(IDB_PNG_SOUND, "PNG", false);
+	m_btn_sound_setting.LoadHovImage(IDB_PNG_SOUND, "PNG", false);
+	m_btn_sound_setting.LoadAltImage(IDB_PNG_SOUND, "PNG", false);
+	m_btn_none_sound_setting.LoadStdImage(IDB_PNG_NONE_SOUND, "PNG", false);
+	m_btn_none_sound_setting.LoadHovImage(IDB_PNG_NONE_SOUND, "PNG", false);
+	m_btn_none_sound_setting.LoadAltImage(IDB_PNG_NONE_SOUND, "PNG", false);
+	m_btn_expand_timer_list.LoadStdImage(IDB_PNG_LIST, "PNG", false);
+	m_btn_expand_timer_list.LoadHovImage(IDB_PNG_LIST, "PNG", false);
+	m_btn_expand_timer_list.LoadAltImage(IDB_PNG_LIST, "PNG", false);
+	SetClassLongA(m_btn_sound_setting.GetSafeHwnd(), GCL_HCURSOR, (LONG)AfxGetApp()->LoadStandardCursor(IDC_HAND));
+	SetClassLongA(m_btn_none_sound_setting.GetSafeHwnd(), GCL_HCURSOR, (LONG)AfxGetApp()->LoadStandardCursor(IDC_HAND));
+	SetClassLongA(m_btn_expand_timer_list.GetSafeHwnd(), GCL_HCURSOR, (LONG)AfxGetApp()->LoadStandardCursor(IDC_HAND));
 	m_btn_work_hour_up.Initialize(DI_BUTTON_COLOR, CMFCButton::FlatStyle::BUTTONSTYLE_NOBORDERS, FONT_NAME_TEXT, FONT_SIZE_BUTTON, FW_BOLD);
 	m_btn_work_hour_down.Initialize(DI_BUTTON_COLOR, CMFCButton::FlatStyle::BUTTONSTYLE_NOBORDERS, FONT_NAME_TEXT, FONT_SIZE_BUTTON, FW_BOLD);
 	m_btn_work_minute_up.Initialize(DI_BUTTON_COLOR, CMFCButton::FlatStyle::BUTTONSTYLE_NOBORDERS, FONT_NAME_TEXT, FONT_SIZE_BUTTON, FW_BOLD);
@@ -683,7 +741,7 @@ void CBOKODoroTimerDlg::Initialize()
 	m_btn_start.Initialize(DI_BUTTON_COLOR, CMFCButton::FlatStyle::BUTTONSTYLE_NOBORDERS, FONT_NAME_TEXT, FONT_SIZE_BUTTON, FW_BOLD);
 	m_btn_stop.Initialize(DI_BUTTON_COLOR, CMFCButton::FlatStyle::BUTTONSTYLE_NOBORDERS, FONT_NAME_TEXT, FONT_SIZE_BUTTON, FW_BOLD);
 	m_btn_reset.Initialize(DI_BUTTON_COLOR, CMFCButton::FlatStyle::BUTTONSTYLE_NOBORDERS, FONT_NAME_TEXT, FONT_SIZE_BUTTON, FW_BOLD);
-	m_btn_expand_timer_list.Initialize(DI_BUTTON_COLOR, CMFCButton::FlatStyle::BUTTONSTYLE_NOBORDERS, FONT_NAME_TEXT, FONT_SIZE_ETC, FW_BOLD);
+	m_btn_timer_save.Initialize(DI_BUTTON_COLOR, CMFCButton::FlatStyle::BUTTONSTYLE_NOBORDERS, FONT_NAME_TEXT, FONT_SIZE_BUTTON, FW_BOLD);
 	m_radio_infinite_repeat.SetFont(&m_radioFont);
 	m_radio_custom_setting.SetFont(&m_radioFont);
 
@@ -729,10 +787,33 @@ void CBOKODoroTimerDlg::Initialize()
 	m_stt_refresh_second.Initialize(FONT_SIZE_TIME_STATIC, FONT_NAME_TEXT);
 
 	// 초기값 설정
-	m_radio_infinite_repeat.SetCheck(FALSE);
-	m_radio_custom_setting.SetCheck(TRUE);
+	if (m_loadTimer.GetInfREPEAT() == 0)	// custom
+	{
+		m_radio_infinite_repeat.SetCheck(FALSE);
+		m_radio_custom_setting.SetCheck(TRUE);
+		OnBnClickedRadioCustom();
+	}
+	else
+	{
+		m_radio_infinite_repeat.SetCheck(TRUE);
+		m_radio_custom_setting.SetCheck(FALSE);
+		OnBnClickedRadioInfinite();
+	}
+
+
+	ResetTimerTitle();
 
 	ResetTimer();
+
+	CString strGroupText;
+	strGroupText.Format("%s 시간", STATE_TEXT_WORK);
+	m_stt_work_time.SetWindowTextA(strGroupText);
+
+	strGroupText.Format("%s 시간", STATE_TEXT_REST);
+	m_stt_rest_time.SetWindowTextA(strGroupText);
+
+	strGroupText.Format("%s 시간", STATE_TEXT_REFRESH);
+	m_stt_refresh_time.SetWindowTextA(strGroupText);
 
 	m_edit_work_hour1.LimitText(1);
 	m_edit_work_hour2.LimitText(1);
@@ -760,6 +841,17 @@ void CBOKODoroTimerDlg::Initialize()
 	m_pBOKODoroTimerListDlg->ShowWindow(SW_HIDE);
 }
 
+void CBOKODoroTimerDlg::ResetTimerTitle()
+{
+	ComplexString strTimerName = m_loadTimer.GetTimerNAME();
+	if (strTimerName.IsEmpty())
+		strTimerName = TITLE_TEXT;
+
+	CString title;
+	title.Format("%s 타이머", strTimerName.GetBuffer());
+	SetWindowTitleText(title);
+}
+
 void CBOKODoroTimerDlg::ClickTimeEditEvent(MSG* msg)
 {
 	if ((msg->hwnd == m_edit_work_hour1) || (msg->hwnd == m_edit_work_hour2) ||
@@ -779,6 +871,109 @@ void CBOKODoroTimerDlg::ClickTimeEditEvent(MSG* msg)
 	}
 }
 
+void CBOKODoroTimerDlg::ViewChange()
+{
+	int nShowFlag = 0;
+	if (m_bViewChange)
+	{
+		m_bViewChange = false;
+		nShowFlag = SW_SHOW;
+		if (m_processTimer.GetMuteSET() == 0)
+		{
+			m_btn_sound_setting.ShowWindow(SW_SHOW);
+			m_btn_none_sound_setting.ShowWindow(SW_HIDE);
+		}
+		else
+		{
+			m_btn_sound_setting.ShowWindow(SW_HIDE);
+			m_btn_none_sound_setting.ShowWindow(SW_SHOW);
+		}
+		Log_Manager->OnPutLog("변경 가능 타이머 화면으로 변경", LogType::LT_EVENT);
+	}
+	else
+	{
+		m_bViewChange = true;
+		nShowFlag = SW_HIDE;
+		m_btn_sound_setting.ShowWindow(SW_HIDE);
+		m_btn_none_sound_setting.ShowWindow(SW_HIDE);
+		Log_Manager->OnPutLog("빈 타이머 화면으로 변경", LogType::LT_EVENT);
+	}
+
+	m_stt_repeat_setting.ShowWindow(nShowFlag);
+	m_stt_state.ShowWindow(nShowFlag);
+	m_stt_work_rest_repeat_set.ShowWindow(nShowFlag);
+	m_stt_all_repeat_set.ShowWindow(nShowFlag);
+	m_stt_work_time.ShowWindow(nShowFlag);
+	m_stt_rest_time.ShowWindow(nShowFlag);
+	m_stt_refresh_time.ShowWindow(nShowFlag);
+	m_stt_work_hour.ShowWindow(nShowFlag);
+	m_stt_work_minute.ShowWindow(nShowFlag);
+	m_stt_work_second.ShowWindow(nShowFlag);
+	m_stt_rest_hour.ShowWindow(nShowFlag);
+	m_stt_rest_minute.ShowWindow(nShowFlag);
+	m_stt_rest_second.ShowWindow(nShowFlag);
+	m_stt_refresh_hour.ShowWindow(nShowFlag);
+	m_stt_refresh_minute.ShowWindow(nShowFlag);
+	m_stt_refresh_second.ShowWindow(nShowFlag);
+
+	m_edit_state.ShowWindow(nShowFlag);
+	m_edit_work_rest_repeat_set.ShowWindow(nShowFlag);
+	m_edit_all_repeat_set.ShowWindow(nShowFlag);
+	m_edit_work_hour1.ShowWindow(nShowFlag);
+	m_edit_work_hour2.ShowWindow(nShowFlag);
+	m_edit_work_minute1.ShowWindow(nShowFlag);
+	m_edit_work_minute2.ShowWindow(nShowFlag);
+	m_edit_work_second1.ShowWindow(nShowFlag);
+	m_edit_work_second2.ShowWindow(nShowFlag);
+	m_edit_rest_hour1.ShowWindow(nShowFlag);
+	m_edit_rest_hour2.ShowWindow(nShowFlag);
+	m_edit_rest_minute1.ShowWindow(nShowFlag);
+	m_edit_rest_minute2.ShowWindow(nShowFlag);
+	m_edit_rest_second1.ShowWindow(nShowFlag);
+	m_edit_rest_second2.ShowWindow(nShowFlag);
+	m_edit_refresh_hour1.ShowWindow(nShowFlag);
+	m_edit_refresh_hour2.ShowWindow(nShowFlag);
+	m_edit_refresh_minute1.ShowWindow(nShowFlag);
+	m_edit_refresh_minute2.ShowWindow(nShowFlag);
+	m_edit_refresh_second1.ShowWindow(nShowFlag);
+	m_edit_refresh_second2.ShowWindow(nShowFlag);
+
+	m_btn_work_hour_up.ShowWindow(nShowFlag);
+	m_btn_work_hour_down.ShowWindow(nShowFlag);
+	m_btn_work_minute_up.ShowWindow(nShowFlag);
+	m_btn_work_minute_down.ShowWindow(nShowFlag);
+	m_btn_work_second_up.ShowWindow(nShowFlag);
+	m_btn_work_second_down.ShowWindow(nShowFlag);
+	m_btn_rest_hour_up.ShowWindow(nShowFlag);
+	m_btn_rest_hour_down.ShowWindow(nShowFlag);
+	m_btn_rest_minute_up.ShowWindow(nShowFlag);
+	m_btn_rest_minute_down.ShowWindow(nShowFlag);
+	m_btn_rest_second_up.ShowWindow(nShowFlag);
+	m_btn_rest_second_down.ShowWindow(nShowFlag);
+	m_btn_refresh_hour_up.ShowWindow(nShowFlag);
+	m_btn_refresh_hour_down.ShowWindow(nShowFlag);
+	m_btn_refresh_minute_up.ShowWindow(nShowFlag);
+	m_btn_refresh_minute_down.ShowWindow(nShowFlag);
+	m_btn_refresh_second_up.ShowWindow(nShowFlag);
+	m_btn_refresh_second_down.ShowWindow(nShowFlag);
+
+	m_btn_start.ShowWindow(nShowFlag);
+	m_btn_stop.ShowWindow(nShowFlag);
+	m_btn_reset.ShowWindow(nShowFlag);
+	m_btn_expand_timer_list.ShowWindow(nShowFlag);
+	m_btn_timer_save.ShowWindow(nShowFlag);
+
+	m_group_repeat.ShowWindow(nShowFlag);
+	m_group_work.ShowWindow(nShowFlag);
+	m_group_rest.ShowWindow(nShowFlag);
+	m_group_refresh.ShowWindow(nShowFlag);
+
+	m_radio_infinite_repeat.ShowWindow(nShowFlag);
+	m_radio_custom_setting.ShowWindow(nShowFlag);
+
+	
+}
+
 BOOL CBOKODoroTimerDlg::PreTranslateMessage(MSG* pMsg)
 {
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
@@ -792,6 +987,14 @@ BOOL CBOKODoroTimerDlg::PreTranslateMessage(MSG* pMsg)
 		TitleBarActiveMove(pMsg);
 
 		ClickTimeEditEvent(pMsg);
+	}
+	else if (WM_LBUTTONDBLCLK == pMsg->message)
+	{
+		// 타이머가 작동중일 경우 어디든 더블클릭하면 화면전환
+		if (m_bStartProcessTimer)
+		{
+			ViewChange();
+		}
 	}
 
 	return CDialogEx::PreTranslateMessage(pMsg);
@@ -1429,6 +1632,8 @@ void CBOKODoroTimerDlg::OnBnClickedRadioInfinite()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	//m_edit_work_rest_repeat_set.EnableWindow(FALSE);
 	//m_edit_all_repeat_set.EnableWindow(FALSE);
+	m_processTimer.SetInfREPEAT(1);
+	Log_Manager->OnPutLog("무한 반복 설정 완료", LogType::LT_EVENT);
 }
 
 
@@ -1437,6 +1642,8 @@ void CBOKODoroTimerDlg::OnBnClickedRadioCustom()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	//m_edit_work_rest_repeat_set.EnableWindow(TRUE);
 	//m_edit_all_repeat_set.EnableWindow(TRUE);
+	m_processTimer.SetInfREPEAT(0);
+	Log_Manager->OnPutLog("사용자 설정 완료", LogType::LT_EVENT);
 }
 
 void CBOKODoroTimerDlg::OnEnChangeEditWorkHour1()
@@ -2720,24 +2927,33 @@ void CBOKODoroTimerDlg::OnBnClickedMfcbuttonStart()
 
 	if (m_startState == TSS_STOP)
 	{
+		// 중지상태에서 시작할떄(첫 시작일때. 일시정지에서 돌아가는것아님) 셋팅된 시간값 체크
+		ComplexString strErrMsg;
+		if (ValidateTimeCheck(strErrMsg) == false)
+		{
+			AfxMessageBox(strErrMsg.GetBuffer());
+			return;
+		}
+
+		m_bStartProcessTimer = true;
 		m_startTimer = m_processTimer;
 		m_startState = TSS_START;
 		m_btn_start.SetWindowTextA(START_STATE_BTN_TEXT_PAUSE);
-		SetTimer(NULL, 1000, NULL);
+		SetTimer(TIMER_PROCESS_ID, 1000, NULL);
 		Log_Manager->OnPutLog("타이머 시작", LogType::LT_EVENT);
 	}
 	else if (m_startState == TSS_START)
 	{
 		m_startState = TSS_PAUSE;
 		m_btn_start.SetWindowTextA(START_STATE_BTN_TEXT_START);
-		KillTimer(NULL);
+		KillTimer(TIMER_PROCESS_ID);
 		Log_Manager->OnPutLog("타이머 일시 정지", LogType::LT_EVENT);
 	}
 	else if (m_startState == TSS_PAUSE)
 	{
 		m_startState = TSS_START;
 		m_btn_start.SetWindowTextA(START_STATE_BTN_TEXT_PAUSE);
-		SetTimer(NULL, 1000, NULL);
+		SetTimer(TIMER_PROCESS_ID, 1000, NULL);
 		Log_Manager->OnPutLog("타이머 재 시작", LogType::LT_EVENT);
 	}
 	StartWithEnableUI(FALSE);
@@ -2748,17 +2964,29 @@ void CBOKODoroTimerDlg::OnBnClickedMfcbuttonStop()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 
-	KillTimer(NULL);
+	m_bStartProcessTimer = false;
+	KillTimer(TIMER_PROCESS_ID);
 	m_startState = TSS_STOP;
+	m_soundState = SSS_NONE;
 	m_state = TMS_NONE;
 	m_btn_start.SetWindowTextA(START_STATE_BTN_TEXT_START);
 	StartWithEnableUI(TRUE);
+
+	// 모든 업무 종료 사운드
+	LoadSound(SSS_ALL_END);
 
 	m_processTimer = m_startTimer;
 	LoadProcessTimer();
 
 	SignalUpdateTimerUI();
 	Invalidate();
+	m_btn_sound_setting.DisConnect();
+	m_btn_none_sound_setting.DisConnect();
+	m_btn_expand_timer_list.DisConnect();
+
+	// 화면이 전환되었을 경우 되돌려야하기 떄문에 
+	m_bViewChange = true;
+	ViewChange();
 
 	Log_Manager->OnPutLog("타이머 정지", LogType::LT_EVENT);
 }
@@ -2772,18 +3000,33 @@ void CBOKODoroTimerDlg::OnBnClickedMfcbuttonReset()
 	Log_Manager->OnPutLog("타이머 초기화", LogType::LT_EVENT);
 }
 
-
-void CBOKODoroTimerDlg::OnTimer(UINT_PTR nIDEvent)
+void CBOKODoroTimerDlg::TimerProcessPrecondition()
 {
-	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-
 	if (m_state == TMS_NONE)
 	{
 		m_state = TMS_WORKING;
+		m_bStateChange = true;
 	}
+	else if (m_state == TMS_STOP)
+	{
+		OnBnClickedMfcbuttonStop();
+	}
+}
+
+void CBOKODoroTimerDlg::CustomRepeatProcess()
+{
+	TimerProcessPrecondition();
 
 	if (m_state == TMS_WORKING)
 	{
+		if ((m_processTimer.GetWkHOUR() == m_startTimer.GetWkHOUR()) &&
+			(m_processTimer.GetWkMINUTE() == m_startTimer.GetWkMINUTE()) &&
+			(m_processTimer.GetWkSECOND() == m_startTimer.GetWkSECOND()))
+		{
+			// 업무시작 사운드
+			LoadSound(SSS_WORK);
+		}
+
 		OnBnClickedMfcbuttonWorkSecondDown();
 
 		int wkHOUR = m_processTimer.GetWkHOUR();
@@ -2793,37 +3036,65 @@ void CBOKODoroTimerDlg::OnTimer(UINT_PTR nIDEvent)
 		// work의 시간이 종료되었을 경우
 		if (wkHOUR == 0 && wkMINUTE == 0 && wkSECOND == 0)
 		{
+			// 마지막 비프음
+			LoadSound(SSS_BEEP_LAST);
+
 			// work_rest 카운트개수와 모든카운트개수가 마지막 카운트일 경우는 바로 종료.
 			if (m_processTimer.GetWrREPEAT() <= 1 && m_processTimer.GetAllREPEAT() <= 0)
 			{
-				OnBnClickedMfcbuttonStop();
+				m_state = TMS_STOP;
 			}
 			// work_rest 카운트개수가 마지막 카운트이고 모든카운트개수가 남아있을 경우는 refresh로 이동.
 			else if (m_processTimer.GetWrREPEAT() <= 1 && m_processTimer.GetAllREPEAT() > 0)
 			{
 				m_state = TMS_REFRESHING;
-
+				m_bStateChange = true;
 				m_processTimer.SetWkHOUR(m_startTimer.GetWkHOUR());
 				m_processTimer.SetWkMINUTE(m_startTimer.GetWkMINUTE());
 				m_processTimer.SetWkSECOND(m_startTimer.GetWkSECOND());
 				ResetWorkTimeUI();
+
 				Log_Manager->OnPutLog("업무 시간 종료. 쉬는 시간 시작", LogType::LT_EVENT);
 			}
 			// work_rest 카운트개수가 많이 남아있으면 rest로 이동.
 			else if (m_processTimer.GetWrREPEAT() > 1)
 			{
 				m_state = TMS_RESTING;
-
+				m_bStateChange = true;
 				m_processTimer.SetWkHOUR(m_startTimer.GetWkHOUR());
 				m_processTimer.SetWkMINUTE(m_startTimer.GetWkMINUTE());
 				m_processTimer.SetWkSECOND(m_startTimer.GetWkSECOND());
 				ResetWorkTimeUI();
+
 				Log_Manager->OnPutLog("업무 시간 종료. 휴식 시간 시작", LogType::LT_EVENT);
+			}
+		}
+		else if (wkHOUR == 0 && wkMINUTE == 0 && (wkSECOND <= 5 && wkSECOND >= 1))
+		{
+			LoadSound(SSS_BEEP);
+		}
+		else if (wkHOUR == 0 && wkMINUTE == 0 && wkSECOND == 7)
+		{
+			if (m_processTimer.GetWrREPEAT() <= 1 && m_processTimer.GetAllREPEAT() > 0)
+			{
+				LoadSound(SSS_REFRESH_START);
+			}
+			else if (m_processTimer.GetWrREPEAT() > 1)
+			{
+				LoadSound(SSS_REST_START);
 			}
 		}
 	}
 	else if (m_state == TMS_RESTING)
 	{
+		if ((m_processTimer.GetRsHOUR() == m_startTimer.GetRsHOUR()) &&
+			(m_processTimer.GetRsMINUTE() == m_startTimer.GetRsMINUTE()) &&
+			(m_processTimer.GetRsSECOND() == m_startTimer.GetRsSECOND()))
+		{
+			// 휴식시작 사운드
+			LoadSound(SSS_REST);
+		}
+
 		OnBnClickedMfcbuttonRestSecondDown();
 
 		int rsHOUR = m_processTimer.GetRsHOUR();
@@ -2833,39 +3104,67 @@ void CBOKODoroTimerDlg::OnTimer(UINT_PTR nIDEvent)
 		// rest의 시간이 종료되었을 경우
 		if (rsHOUR == 0 && rsMINUTE == 0 && rsSECOND == 0)
 		{
+			// 마지막 비프음
+			LoadSound(SSS_BEEP_LAST);
+
 			// work_rest 카운트개수와 모든카운트개수가 마지막 카운트일 경우는 바로 종료.
 			if (m_processTimer.GetWrREPEAT() <= 1 && m_processTimer.GetAllREPEAT() <= 0)
 			{
-				OnBnClickedMfcbuttonStop();
+				m_state = TMS_STOP;
 			}
 			// work_rest 카운트개수가 마지막 카운트이고 모든카운트개수가 남아있을 경우는 refresh로 이동.
 			else if (m_processTimer.GetWrREPEAT() <= 1 && m_processTimer.GetAllREPEAT() > 0)
 			{
 				m_state = TMS_REFRESHING;
+				m_bStateChange = true;
 				m_processTimer.SetWrREPEAT(m_processTimer.GetWrREPEAT() - 1);
-
 				m_processTimer.SetRsHOUR(m_startTimer.GetRsHOUR());
 				m_processTimer.SetRsMINUTE(m_startTimer.GetRsMINUTE());
 				m_processTimer.SetRsSECOND(m_startTimer.GetRsSECOND());
 				ResetRestTimeUI();
+
 				Log_Manager->OnPutLog("휴식 시간 종료. 쉬는 시간 시작", LogType::LT_EVENT);
 			}
 			// work_rest 카운트개수가 많이 남아있으면 work로 이동하고 work_rest 카운트개수 1 감소.
 			else if (m_processTimer.GetWrREPEAT() > 1)
 			{
 				m_state = TMS_WORKING;
+				m_bStateChange = true;
 				m_processTimer.SetWrREPEAT(m_processTimer.GetWrREPEAT() - 1);
-
 				m_processTimer.SetRsHOUR(m_startTimer.GetRsHOUR());
 				m_processTimer.SetRsMINUTE(m_startTimer.GetRsMINUTE());
 				m_processTimer.SetRsSECOND(m_startTimer.GetRsSECOND());
 				ResetRestTimeUI();
+
 				Log_Manager->OnPutLog("휴식 시간 종료. 업무 시간 시작", LogType::LT_EVENT);
+			}
+		}
+		else if (rsHOUR == 0 && rsMINUTE == 0 && (rsSECOND <= 5 && rsSECOND >= 1))
+		{
+			LoadSound(SSS_BEEP);
+		}
+		else if (rsHOUR == 0 && rsMINUTE == 0 && rsSECOND == 7)
+		{
+			if (m_processTimer.GetWrREPEAT() <= 1 && m_processTimer.GetAllREPEAT() > 0)
+			{
+				LoadSound(SSS_REFRESH_START);
+			}
+			else if (m_processTimer.GetWrREPEAT() > 1)
+			{
+				LoadSound(SSS_WORK_START);
 			}
 		}
 	}
 	else if (m_state == TMS_REFRESHING)
 	{
+		if ((m_processTimer.GetRfHOUR() == m_startTimer.GetRfHOUR()) &&
+			(m_processTimer.GetRfMINUTE() == m_startTimer.GetRfMINUTE()) &&
+			(m_processTimer.GetRfSECOND() == m_startTimer.GetRfSECOND()))
+		{
+			// 쉼시작 사운드
+			LoadSound(SSS_REFRESH);
+		}
+
 		OnBnClickedMfcbuttonRefreshSecondDown();
 
 		int rfHOUR = m_processTimer.GetRfHOUR();
@@ -2875,35 +3174,381 @@ void CBOKODoroTimerDlg::OnTimer(UINT_PTR nIDEvent)
 		// rest의 시간이 종료되었을 경우
 		if (rfHOUR == 0 && rfMINUTE == 0 && rfSECOND == 0)
 		{
+			// 마지막 비프음
+			LoadSound(SSS_BEEP_LAST);
+
 			// 모든 반복 카운트개수가 남았을 경우 work로 이동하고 work_rest 카운트개수 초기화 및 모든카운트개수 1 감소.
 			if (m_processTimer.GetAllREPEAT() > 0)
 			{
 				m_state = TMS_WORKING;
+				m_bStateChange = true;
 				m_processTimer.SetWrREPEAT(m_startTimer.GetWrREPEAT());
 				m_processTimer.SetAllREPEAT(m_processTimer.GetAllREPEAT() - 1);
+				m_processTimer.SetRfHOUR(m_startTimer.GetRfHOUR());
+				m_processTimer.SetRfMINUTE(m_startTimer.GetRfMINUTE());
+				m_processTimer.SetRfSECOND(m_startTimer.GetRfSECOND());
+				ResetRefreshTimeUI();
 
+				Log_Manager->OnPutLog("쉬는 시간 종료. 업무 시간 시작", LogType::LT_EVENT);
+			}
+			// 모든 반복 카운트개수가 마지막일 경우 종료.
+			else if (m_processTimer.GetAllREPEAT() <= 0)
+			{
+				m_state = TMS_STOP;
+			}
+		}
+		else if (rfHOUR == 0 && rfMINUTE == 0 && (rfSECOND <= 5 && rfSECOND >= 1))
+		{
+			LoadSound(SSS_BEEP);
+		}
+		else if (rfHOUR == 0 && rfMINUTE == 0 && rfSECOND == 7)
+		{
+			LoadSound(SSS_WORK_START);
+		}
+	}
+}
+
+void CBOKODoroTimerDlg::InfiniteRepeatProcess()
+{
+	TimerProcessPrecondition();
+
+	if (m_state == TMS_WORKING)
+	{
+		if ((m_processTimer.GetWkHOUR() == m_startTimer.GetWkHOUR()) &&
+			(m_processTimer.GetWkMINUTE() == m_startTimer.GetWkMINUTE()) &&
+			(m_processTimer.GetWkSECOND() == m_startTimer.GetWkSECOND()))
+		{
+			// 업무시작 사운드
+			LoadSound(SSS_WORK);
+		}
+
+		OnBnClickedMfcbuttonWorkSecondDown();
+
+		int wkHOUR = m_processTimer.GetWkHOUR();
+		int wkMINUTE = m_processTimer.GetWkMINUTE();
+		int wkSECOND = m_processTimer.GetWkSECOND();
+
+		// work의 시간이 종료되었을 경우
+		if (wkHOUR == 0 && wkMINUTE == 0 && wkSECOND == 0)
+		{
+			// 마지막 비프음
+			LoadSound(SSS_BEEP_LAST);
+
+			// 전체반복이 0인경우는 work_rest를 1번씩 무한반복으로 돌림. refresh time은 돌아가지않음.
+			if (m_processTimer.GetAllREPEAT() == 0)
+			{
+				m_state = TMS_RESTING;
+				m_bStateChange = true;
+				m_processTimer.SetWkHOUR(m_startTimer.GetWkHOUR());
+				m_processTimer.SetWkMINUTE(m_startTimer.GetWkMINUTE());
+				m_processTimer.SetWkSECOND(m_startTimer.GetWkSECOND());
+				ResetWorkTimeUI();
+				Log_Manager->OnPutLog("업무 시간 종료. 휴식 시간 시작", LogType::LT_EVENT);
+			}
+			else
+			{
+				// work_rest 반복횟수가 1보다 작을경우는 휴식시간없이 바로 쉬는시간으로 설정
+				if (m_processTimer.GetWrREPEAT() <= 1)
+				{
+					m_state = TMS_REFRESHING;
+					m_bStateChange = true;
+					m_processTimer.SetWrREPEAT(m_processTimer.GetWrREPEAT() - 1);
+					m_processTimer.SetWkHOUR(m_startTimer.GetWkHOUR());
+					m_processTimer.SetWkMINUTE(m_startTimer.GetWkMINUTE());
+					m_processTimer.SetWkSECOND(m_startTimer.GetWkSECOND());
+					ResetWorkTimeUI();
+					Log_Manager->OnPutLog("업무 시간 종료. 쉬는 시간 시작", LogType::LT_EVENT);
+				}
+				else
+				{
+					m_state = TMS_RESTING;
+					m_bStateChange = true;
+					m_processTimer.SetWkHOUR(m_startTimer.GetWkHOUR());
+					m_processTimer.SetWkMINUTE(m_startTimer.GetWkMINUTE());
+					m_processTimer.SetWkSECOND(m_startTimer.GetWkSECOND());
+					ResetWorkTimeUI();
+					Log_Manager->OnPutLog("업무 시간 종료. 휴식 시간 시작", LogType::LT_EVENT);
+				}
+			}
+		}
+		else if (wkHOUR == 0 && wkMINUTE == 0 && (wkSECOND <= 5 && wkSECOND >= 1))
+		{
+			LoadSound(SSS_BEEP);
+		}
+		else if (wkHOUR == 0 && wkMINUTE == 0 && wkSECOND == 7)
+		{
+			if (m_processTimer.GetAllREPEAT() == 0)
+			{
+				LoadSound(SSS_REST_START);
+			}
+			else
+			{
+				if (m_processTimer.GetWrREPEAT() <= 1)
+				{
+					LoadSound(SSS_REFRESH_START);
+				}
+				else
+				{
+					LoadSound(SSS_REST_START);
+				}
+			}
+		}
+	}
+	else if (m_state == TMS_RESTING)
+	{
+		if ((m_processTimer.GetRsHOUR() == m_startTimer.GetRsHOUR()) &&
+			(m_processTimer.GetRsMINUTE() == m_startTimer.GetRsMINUTE()) &&
+			(m_processTimer.GetRsSECOND() == m_startTimer.GetRsSECOND()))
+		{
+			// 업무시작 사운드
+			LoadSound(SSS_REST);
+		}
+
+		OnBnClickedMfcbuttonRestSecondDown();
+
+		int rsHOUR = m_processTimer.GetRsHOUR();
+		int rsMINUTE = m_processTimer.GetRsMINUTE();
+		int rsSECOND = m_processTimer.GetRsSECOND();
+
+		// rest의 시간이 종료되었을 경우
+		if (rsHOUR == 0 && rsMINUTE == 0 && rsSECOND == 0)
+		{
+			// 마지막 비프음
+			LoadSound(SSS_BEEP_LAST);
+
+			// 전체반복이 0인경우는 work_rest를 1번씩 무한반복으로 돌림. refresh time은 돌아가지않음.
+			if (m_processTimer.GetAllREPEAT() == 0)
+			{
+				m_state = TMS_WORKING;
+				m_bStateChange = true;
+				m_processTimer.SetRsHOUR(m_startTimer.GetRsHOUR());
+				m_processTimer.SetRsMINUTE(m_startTimer.GetRsMINUTE());
+				m_processTimer.SetRsSECOND(m_startTimer.GetRsSECOND());
+				ResetRestTimeUI();
+				Log_Manager->OnPutLog("휴식 시간 종료. 업무 시간 시작", LogType::LT_EVENT);
+			}
+			else
+			{
+				// 이쪽으로 올일은 없을듯
+				if (m_processTimer.GetWrREPEAT() <= 1)
+				{
+					m_state = TMS_REFRESHING;
+					m_bStateChange = true;
+					m_processTimer.SetWrREPEAT(m_processTimer.GetWrREPEAT() - 1);
+					m_processTimer.SetRsHOUR(m_startTimer.GetRsHOUR());
+					m_processTimer.SetRsMINUTE(m_startTimer.GetRsMINUTE());
+					m_processTimer.SetRsSECOND(m_startTimer.GetRsSECOND());
+					ResetRestTimeUI();
+					Log_Manager->OnPutLog("휴식 시간 종료. 쉬는 시간 시작", LogType::LT_EVENT);
+				}
+				else
+				{
+					m_state = TMS_WORKING;
+					m_bStateChange = true;
+					m_processTimer.SetWrREPEAT(m_processTimer.GetWrREPEAT() - 1);
+					m_processTimer.SetRsHOUR(m_startTimer.GetRsHOUR());
+					m_processTimer.SetRsMINUTE(m_startTimer.GetRsMINUTE());
+					m_processTimer.SetRsSECOND(m_startTimer.GetRsSECOND());
+					ResetRestTimeUI();
+					Log_Manager->OnPutLog("휴식 시간 종료. 업무 시간 시작", LogType::LT_EVENT);
+				}
+			}
+		}
+		else if (rsHOUR == 0 && rsMINUTE == 0 && (rsSECOND <= 5 && rsSECOND >= 1))
+		{
+			LoadSound(SSS_BEEP);
+		}
+		else if (rsHOUR == 0 && rsMINUTE == 0 && rsSECOND == 7)
+		{
+			if (m_processTimer.GetAllREPEAT() == 0)
+			{
+				LoadSound(SSS_WORK_START);
+			}
+			else
+			{
+				// 이쪽으로 올일은 없을듯
+				if (m_processTimer.GetWrREPEAT() <= 1)
+				{
+					LoadSound(SSS_REFRESH_START);
+				}
+				else
+				{
+					LoadSound(SSS_WORK_START);
+				}
+			}
+		}
+	}
+	else if (m_state == TMS_REFRESHING)
+	{
+		if ((m_processTimer.GetRfHOUR() == m_startTimer.GetRfHOUR()) &&
+			(m_processTimer.GetRfMINUTE() == m_startTimer.GetRfMINUTE()) &&
+			(m_processTimer.GetRfSECOND() == m_startTimer.GetRfSECOND()))
+		{
+			// 업무시작 사운드
+			LoadSound(SSS_REFRESH);
+		}
+
+		OnBnClickedMfcbuttonRefreshSecondDown();
+
+		int rfHOUR = m_processTimer.GetRfHOUR();
+		int rfMINUTE = m_processTimer.GetRfMINUTE();
+		int rfSECOND = m_processTimer.GetRfSECOND();
+
+		// rest의 시간이 종료되었을 경우
+		if (rfHOUR == 0 && rfMINUTE == 0 && rfSECOND == 0)
+		{
+			// 마지막 비프음
+			LoadSound(SSS_BEEP_LAST);
+
+			// 모든 반복횟수가 0인경우는 처리하지 않음.
+			if (m_processTimer.GetAllREPEAT() == 0)
+			{
+				return;
+			}
+			else
+			{
+				// 모든 반복 카운트개수가 남았을 경우 work로 이동하고 work_rest 카운트개수 초기화 
+				m_state = TMS_WORKING;
+				m_bStateChange = true;
+				m_processTimer.SetWrREPEAT(m_startTimer.GetWrREPEAT());
 				m_processTimer.SetRfHOUR(m_startTimer.GetRfHOUR());
 				m_processTimer.SetRfMINUTE(m_startTimer.GetRfMINUTE());
 				m_processTimer.SetRfSECOND(m_startTimer.GetRfSECOND());
 				ResetRefreshTimeUI();
 				Log_Manager->OnPutLog("쉬는 시간 종료. 업무 시간 시작", LogType::LT_EVENT);
 			}
-			// 모든 반복 카운트개수가 마지막일 경우 종료.
-			else if (m_processTimer.GetAllREPEAT() <= 0)
+		}
+		else if (rfHOUR == 0 && rfMINUTE == 0 && (rfSECOND <= 5 && rfSECOND >= 1))
+		{
+			LoadSound(SSS_BEEP);
+		}
+		else if (rfHOUR == 0 && rfMINUTE == 0 && rfSECOND == 7)
+		{
+			if (m_processTimer.GetAllREPEAT() != 0)
 			{
-				OnBnClickedMfcbuttonStop();
+				LoadSound(SSS_WORK_START);
 			}
 		}
 	}
+}
 
-	SignalUpdateTimerUI();
-	Invalidate(FALSE);
+void CBOKODoroTimerDlg::ProcessTimer()
+{
+	// 커스텀, 무한반복 구분하여 처리하기.
 
+	if (m_processTimer.GetInfREPEAT() == 0)
+	{
+		CustomRepeatProcess();
+	}
+	else
+	{
+		InfiniteRepeatProcess();
+	}
+
+	if (m_bStateChange)
+	{
+		m_bStateChange = false;
+		SignalUpdateTimerUI();
+		Invalidate();
+		m_btn_sound_setting.DisConnect();
+		m_btn_none_sound_setting.DisConnect();
+		m_btn_expand_timer_list.DisConnect();
+	}
+}
+
+UINT CBOKODoroTimerDlg::ProcessSound(LPVOID method)
+{
+	CBOKODoroTimerDlg* pTimer = (CBOKODoroTimerDlg*)method;
+	int nResourceSoundID = 0;
+	switch (pTimer->m_soundState)
+	{
+		case SSS_WORK:
+		{
+			nResourceSoundID = IDR_WAVE_WORK;
+			break;
+		}
+		case SSS_REST:
+		{
+			nResourceSoundID = IDR_WAVE_REST;
+			break;
+		}
+		case SSS_REFRESH:
+		{
+			nResourceSoundID = IDR_WAVE_REFRESH;
+			break;
+		}
+		case SSS_WORK_START:
+		{
+			nResourceSoundID = IDR_WAVE_WORK_START;
+			break;
+		}
+		case SSS_REST_START:
+		{
+			nResourceSoundID = IDR_WAVE_REST_START;
+			break;
+		}
+		case SSS_REFRESH_START:
+		{
+			nResourceSoundID = IDR_WAVE_REFRESH_START;
+			break;
+		}
+		case SSS_ALL_END:
+		{
+			nResourceSoundID = IDR_WAVE_ALL_END;
+			break;
+		}
+		case SSS_BEEP:
+		{
+			Beep(500, 400);
+			break;
+		}
+		case SSS_BEEP_LAST:
+		{
+			Beep(1000, 1000);
+			break;
+		}
+	
+		default:
+		{
+			break;
+		}
+	}
+
+	if (nResourceSoundID != 0)
+	{
+		PlaySound(MAKEINTRESOURCE(nResourceSoundID), AfxGetInstanceHandle(), SND_ASYNC | SND_RESOURCE);
+	}
+
+	//KillTimer(TIMER_SOUND_ID);
+
+	return 0;
+}
+
+void CBOKODoroTimerDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+
+	ProcessTimer();
+	/*switch (nIDEvent)
+	{
+		case TIMER_PROCESS_ID:
+		{
+			ProcessTimer();
+			break;
+		}
+		case TIMER_SOUND_ID:
+		{
+			ProcessSound();
+			break;
+		}
+		default:
+		{
+			break;
+		}
+	}*/
 
 	__super::OnTimer(nIDEvent);
 }
-
-
 
 BOOL CBOKODoroTimerDlg::OnEraseBkgnd(CDC* pDC)
 {
@@ -2937,4 +3582,96 @@ void CBOKODoroTimerDlg::OnOK()
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
 
 	//__super::OnOK();
+}
+
+
+void CBOKODoroTimerDlg::OnBnClickedMfcbuttonTimerSave()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	SaveDBTimer();
+}
+
+
+void CBOKODoroTimerDlg::OnBnClickedButtonSoundSetting()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	// 음소거버튼으로 변경됨.
+	m_processTimer.SetMuteSET(1);	// 1이 음소거설정
+	m_btn_sound_setting.ShowWindow(SW_HIDE);
+	m_btn_none_sound_setting.ShowWindow(SW_SHOW);
+
+	GotoDlgCtrl(&m_stt_repeat_setting);	// 포커스가 자꾸 edit state에 가서 임시방편 설정
+}
+
+
+void CBOKODoroTimerDlg::OnBnClickedButtonNoneSoundSetting()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	// 소리버튼으로 변경됨.
+	m_processTimer.SetMuteSET(0);	// 0이 소리설정
+	m_btn_sound_setting.ShowWindow(SW_SHOW);
+	m_btn_none_sound_setting.ShowWindow(SW_HIDE);
+	GotoDlgCtrl(&m_stt_repeat_setting);	// 포커스가 자꾸 edit state에 가서 임시방편 설정
+}
+
+bool CBOKODoroTimerDlg::ValidateTimeCheck(ComplexString& errMsg)
+{
+	int wkHOUR = m_processTimer.GetWkHOUR();
+	int wkMINUTE = m_processTimer.GetWkMINUTE();
+	int wkSECOND = m_processTimer.GetWkSECOND();
+	ComplexTimeTable wkTime;
+
+	wkTime.hour = wkHOUR;
+	wkTime.minute = wkMINUTE;
+	wkTime.second = wkSECOND;
+
+	if ((unsigned long long)wkTime < 10)
+	{
+		errMsg.Format("%s 시간은 10초 내로 설정할 수 없습니다.", STATE_TEXT_WORK);
+		return false;
+	}
+
+	int rsHOUR = m_processTimer.GetRsHOUR();
+	int rsMINUTE = m_processTimer.GetRsMINUTE();
+	int rsSECOND = m_processTimer.GetRsSECOND();
+	ComplexTimeTable rsTime;
+
+	rsTime.hour = rsHOUR;
+	rsTime.minute = rsMINUTE;
+	rsTime.second = rsSECOND;
+
+	if ((unsigned long long)rsTime < 10)
+	{
+		errMsg.Format("%s 시간은 10초 내로 설정할 수 없습니다.", STATE_TEXT_REST);
+		return false;
+	}
+
+	int rfHOUR = m_processTimer.GetRfHOUR();
+	int rfMINUTE = m_processTimer.GetRfMINUTE();
+	int rfSECOND = m_processTimer.GetRfSECOND();
+	ComplexTimeTable rfTime;
+
+	rfTime.hour = rfHOUR;
+	rfTime.minute = rfMINUTE;
+	rfTime.second = rfSECOND;
+
+	if ((unsigned long long)rfTime < 10)
+	{
+		errMsg.Format("%s 시간은 10초 내로 설정할 수 없습니다.", STATE_TEXT_REFRESH);
+		return false;
+	}
+
+	return true;
+}
+
+void CBOKODoroTimerDlg::LoadSound(StartSoundState state)
+{
+	// 음소거라도 상태값은 받자.
+	m_soundState = state;
+
+	if (m_processTimer.GetMuteSET() == 0)
+	{
+		m_soundThread = AfxBeginThread(ProcessSound, this);
+		//SetTimer(TIMER_SOUND_ID, 2000, NULL);
+	}
 }

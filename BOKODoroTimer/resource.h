@@ -18,6 +18,21 @@
 #define IDB_PNG3                        139
 #define IDB_PNG_BK_MAIN_YELLOW          139
 #define IDD_DIALOG_TIMER_LIST           140
+#define IDD_DIALOG_ADD_TIMER_NAME       142
+#define IDD_DIALOG_TIMER_LIST_CTRL      145
+#define IDD_DIALOG_SCROLL_BAR           149
+#define IDB_PNG_NONE_SOUND              158
+#define IDB_PNG_SOUND                   159
+#define IDB_PNG1                        161
+#define IDB_PNG_LIST                    161
+#define IDR_WAVE_ALL_END                162
+#define IDR_WAVE_REFRESH                163
+#define IDR_WAVE_REFRESH_START          164
+#define IDR_WAVE_REST                   165
+#define IDR_WAVE_REST_START             166
+#define IDR_WAVE_WORK                   167
+#define IDR_WAVE7                       168
+#define IDR_WAVE_WORK_START             168
 #define IDC_STATIC_REPEAT               1000
 #define IDC_STATIC_WORK_TIME            1001
 #define IDC_STATIC_REST_TIME            1002
@@ -82,14 +97,29 @@
 #define IDC_STATIC_REFRESH_MINUTE       1060
 #define IDC_STATIC_REFRESH_SECOND       1061
 #define IDC_MFCBUTTON_EXPAND_TIMER_LIST 1062
+#define IDC_STATIC_GROUP_WORK           1063
+#define IDC_STATIC_GROUP_REST           1064
+#define IDC_STATIC_GROUP_REFRESH        1065
+#define IDC_STATIC_GROUP_REPEAT         1066
+#define IDC_MFCBUTTON_TIMER_SAVE        1067
+#define IDC_EDIT_TIMER_NAME             1068
+#define IDC_MFCBUTTON_SAVE_TIMER_NAME   1069
+#define IDC_MFCBUTTON_CANCEL_TIMER_NAME 1070
+#define IDC_STATIC_TIMER_NAME           1071
+#define IDC_MFCBUTTON_TIMER_DELETE      1073
+#define IDC_MFCBUTTON_TOP               1074
+#define IDC_MFCBUTTON_BOTTOM            1075
+#define IDC_MFCBUTTON_MIDDLE            1076
+#define IDC_BUTTON_SOUND_SETTING        1077
+#define IDC_BUTTON_NONE_SOUND_SETTING   1078
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        142
+#define _APS_NEXT_RESOURCE_VALUE        169
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1063
+#define _APS_NEXT_CONTROL_VALUE         1079
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

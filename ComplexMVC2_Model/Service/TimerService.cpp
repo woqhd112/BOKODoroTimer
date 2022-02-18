@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "TimerService.h"
 
 TimerService::TimerService()
@@ -55,20 +56,20 @@ bool TimerService::UpdateTimerAutoIncrementSeq()
 	return bSuccess;
 }
 
-bool TimerService::InsertTimer(int in_wkHOUR, int in_wkMINUTE, int in_wkSECOND, int in_rsHOUR, int in_rsMINUTE, int in_rsSECOND, int in_rfHOUR, int in_rfMINUTE, int in_rfSECOND, int in_wrREPEAT, int in_allREPEAT)
+bool TimerService::InsertTimer(ComplexString in_timerNAME, int in_wkHOUR, int in_wkMINUTE, int in_wkSECOND, int in_rsHOUR, int in_rsMINUTE, int in_rsSECOND, int in_rfHOUR, int in_rfMINUTE, int in_rfSECOND, int in_wrREPEAT, int in_allREPEAT, int in_infREPEAT, int in_muteSET)
 {
 	bool bSuccess = false;
 
-	bSuccess = m_timerModel->InsertTimer(in_wkHOUR, in_wkMINUTE, in_wkSECOND, in_rsHOUR, in_rsMINUTE, in_rsSECOND, in_rfHOUR, in_rfMINUTE, in_rfSECOND, in_wrREPEAT, in_allREPEAT);
+	bSuccess = m_timerModel->InsertTimer(in_timerNAME, in_wkHOUR, in_wkMINUTE, in_wkSECOND, in_rsHOUR, in_rsMINUTE, in_rsSECOND, in_rfHOUR, in_rfMINUTE, in_rfSECOND, in_wrREPEAT, in_allREPEAT, in_infREPEAT, in_muteSET);
 
 	return bSuccess;
 }
 
-bool TimerService::UpdateTimer(int in_wkHOUR, int in_wkMINUTE, int in_wkSECOND, int in_rsHOUR, int in_rsMINUTE, int in_rsSECOND, int in_rfHOUR, int in_rfMINUTE, int in_rfSECOND, int in_timerSEQ, int in_wrREPEAT, int in_allREPEAT)
+bool TimerService::UpdateTimer(ComplexString in_timerNAME, int in_wkHOUR, int in_wkMINUTE, int in_wkSECOND, int in_rsHOUR, int in_rsMINUTE, int in_rsSECOND, int in_rfHOUR, int in_rfMINUTE, int in_rfSECOND, int in_timerSEQ, int in_wrREPEAT, int in_allREPEAT, int in_infREPEAT, int in_muteSET)
 {
 	bool bSuccess = false;
 
-	bSuccess = m_timerModel->UpdateTimer(in_wkHOUR, in_wkMINUTE, in_wkSECOND, in_rsHOUR, in_rsMINUTE, in_rsSECOND, in_rfHOUR, in_rfMINUTE, in_rfSECOND, in_timerSEQ, in_wrREPEAT, in_allREPEAT);
+	bSuccess = m_timerModel->UpdateTimer(in_timerNAME, in_wkHOUR, in_wkMINUTE, in_wkSECOND, in_rsHOUR, in_rsMINUTE, in_rsSECOND, in_rfHOUR, in_rfMINUTE, in_rfSECOND, in_timerSEQ, in_wrREPEAT, in_allREPEAT, in_infREPEAT, in_muteSET);
 
 	return bSuccess;
 }

@@ -7,6 +7,7 @@ public:
 
 	TimerVO()
 		: timerSEQ(0)
+		, timerNAME("")
 		, wkHOUR(0)
 		, wkMINUTE(0)
 		, wkSECOND(0)
@@ -18,13 +19,16 @@ public:
 		, rfSECOND(0)
 		, wrREPEAT(1)
 		, allREPEAT(0)
+		, infREPEAT(0)
+		, muteSET(0)
 	{
 	
 	}
 
-	TimerVO(int timerSEQ, int wkHOUR, int wkMINUTE, int wkSECOND, int rsHOUR, int rsMINUTE, int rsSECOND, int rfHOUR, int rfMINUTE, int rfSECOND, int wrREPEAT, int allREPEAT)
+	TimerVO(int timerSEQ, ComplexString timerNAME, int wkHOUR, int wkMINUTE, int wkSECOND, int rsHOUR, int rsMINUTE, int rsSECOND, int rfHOUR, int rfMINUTE, int rfSECOND, int wrREPEAT, int allREPEAT, int infREPEAT, int muteSET)
 	{
 		this->timerSEQ = timerSEQ;
+		this->timerNAME = timerNAME;
 		this->wkHOUR = wkHOUR;
 		this->wkMINUTE = wkMINUTE;
 		this->wkSECOND = wkSECOND;
@@ -36,11 +40,15 @@ public:
 		this->rfSECOND = rfSECOND;
 		this->wrREPEAT = wrREPEAT;
 		this->allREPEAT = allREPEAT;
+		this->infREPEAT = infREPEAT;
+		this->muteSET = muteSET;
 	}
 
 	TimerVO(const TimerVO& vo)
 	{
 		this->timerSEQ = vo.timerSEQ;
+
+		this->timerNAME = vo.timerNAME;
 
 		this->wkHOUR = vo.wkHOUR;
 		this->wkMINUTE = vo.wkMINUTE;
@@ -56,6 +64,8 @@ public:
 
 		this->wrREPEAT = vo.wrREPEAT;
 		this->allREPEAT = vo.allREPEAT;
+		this->infREPEAT = vo.infREPEAT;
+		this->muteSET = vo.muteSET;
 	}
 
 	~TimerVO()
@@ -66,6 +76,8 @@ public:
 	void Clear()
 	{
 		timerSEQ = 0;
+
+		timerNAME = "";
 
 		wkHOUR = 0;
 		wkMINUTE = 0;
@@ -81,11 +93,18 @@ public:
 
 		wrREPEAT = 1;
 		allREPEAT = 0;
+		infREPEAT = 0;
+		muteSET = 0;
 	}
-
+	
 	void SetTimerSEQ(int timerSEQ)
 	{
 		this->timerSEQ = timerSEQ;
+	}
+
+	void SetTimerNAME(ComplexString timerNAME)
+	{
+		this->timerNAME = timerNAME;
 	}
 
 	void SetWkHOUR(int wkHOUR)
@@ -143,9 +162,24 @@ public:
 		this->allREPEAT = allREPEAT;
 	}
 
+	void SetInfREPEAT(int infREPEAT)
+	{
+		this->infREPEAT = infREPEAT;
+	}
+
+	void SetMuteSET(int muteSET)
+	{
+		this->muteSET = muteSET;
+	}
+
 	int GetTimerSEQ() const
 	{
 		return timerSEQ;
+	}
+
+	ComplexString GetTimerNAME() const
+	{
+		return timerNAME;
 	}
 
 	int GetWkHOUR() const
@@ -203,23 +237,38 @@ public:
 		return allREPEAT;
 	}
 
+	int GetInfREPEAT() const
+	{
+		return infREPEAT;
+	}
+
+	int GetMuteSET() const
+	{
+		return muteSET;
+	}
+
 private:
 
-	int timerSEQ;
+	int timerSEQ; // 타이머 번호
 
-	int wkHOUR;
-	int wkMINUTE;
-	int wkSECOND;
+	ComplexString timerNAME; // 타이머이름
 
-	int rsHOUR;
-	int rsMINUTE;
-	int rsSECOND;
+	int wkHOUR;	// 업무 시간 0~99
+	int wkMINUTE; // 업무 분 0~59
+	int wkSECOND; // 업무 초 0~59
 
-	int rfHOUR;
-	int rfMINUTE;
-	int rfSECOND;
+	int rsHOUR; // 휴식 시간 0~99
+	int rsMINUTE; // 휴식 분 0~59
+	int rsSECOND; // 휴식 초 0~59
 
-	int wrREPEAT;
-	int allREPEAT;
+	int rfHOUR; // 쉼 시간 0~99
+	int rfMINUTE; // 쉼 분 0~59
+	int rfSECOND; // 쉼 초 0~59
+
+	int wrREPEAT; // 업무 휴식 반복횟수 1~
+	int allREPEAT; // 모든반복횟수 0~
+
+	int infREPEAT; // 무한반복 설정 1:무한, 0:커스텀
+	int muteSET; // 음소거설정 1:음소거, 0:소리
 
 };

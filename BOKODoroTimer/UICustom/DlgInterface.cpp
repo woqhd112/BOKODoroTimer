@@ -15,6 +15,7 @@ DlgInterface::DlgInterface(CWnd* activeDlg, bool bMain)
 	m_staticLightBrush.CreateSolidBrush(DI_LIGHT_COLOR);
 	m_editBrush.CreateSolidBrush(DI_EDIT_COLOR);
 	m_subBKBrush.CreateSolidBrush(DI_SUB_BK_COLOR);
+	m_buttonBrush.CreateSolidBrush(DI_BUTTON_COLOR);
 
 	m_staticTextColor = DI_TEXT_COLOR_WHITE;
 	m_buttonTextColor = DI_TEXT_COLOR_WHITE;
@@ -33,6 +34,7 @@ DlgInterface::~DlgInterface()
 	m_staticBrush_Green.DeleteObject();
 	m_staticBrush_Yellow.DeleteObject();
 	m_staticBrush_Red.DeleteObject();
+	m_buttonBrush.DeleteObject();
 
 	if (m_pBitmap)
 	{
@@ -79,6 +81,7 @@ void DlgInterface::CreateFrame(FrameDicisionType type)
 	}
 	else if (type == FDT_LIGHT_DLG)
 	{
+		LoadPNGResource(m_pngBackground1, IDB_PNG_BK_ETC, "PNG");
 	}
 	else if (type == FDT_SUB_DLG)
 	{
@@ -157,6 +160,7 @@ bool DlgInterface::LoadPNGResource(CImage& loadObjectIamage, UINT id, LPCTSTR pT
 void DlgInterface::SetWindowTitleText(CString text)
 {
 	m_titleTextStatic.SetWindowTextA(text);
+	m_wnd->Invalidate();
 }
 
 void DlgInterface::SetWindowTitleTextColor(COLORREF color)

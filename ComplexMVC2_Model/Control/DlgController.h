@@ -1,5 +1,6 @@
 #pragma once
 #include "../Service/TimerService.h"
+#include "../Service/SelectTimerService.h"
 
 
 class COMPLEXMVC2_MODEL_DLL DlgController
@@ -25,10 +26,17 @@ public:
 	// 타이머 전체 삭제
 	bool DeleteAllTimer();
 
+	// select timer control
+	// 셀렉트 타이머 로드
+	bool SelectAllSelectTimer();
+	// 셀렉트 타이머 갱신
+	bool UpdateSelectTimer();
+
 
 private:
 
 	TimerService* m_timerService;
+	SelectTimerService* m_selectTimerService;
 
 };
 

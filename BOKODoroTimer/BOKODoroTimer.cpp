@@ -32,6 +32,12 @@ CBOKODoroTimerApp::CBOKODoroTimerApp()
 
 CBOKODoroTimerApp::~CBOKODoroTimerApp()
 {
+	if (SelectTimer_DB_Manager)
+	{
+		delete SelectTimer_DB_Manager;
+		SelectTimer_DB_Manager = nullptr;
+	}
+
 	if (Timer_DB_Manager)
 	{
 		delete Timer_DB_Manager;

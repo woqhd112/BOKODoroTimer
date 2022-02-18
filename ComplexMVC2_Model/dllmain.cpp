@@ -3,7 +3,9 @@
 
 #ifdef _DEBUG
 #pragma comment(lib, "ComplexLibrary_dbg.lib")
+#pragma comment(lib, "ComplexUtilProcess_dbg.lib")
 #else
+#pragma comment(lib, "ComplexUtilProcess.lib")
 #pragma comment(lib, "ComplexLibrary.lib")
 #endif
 

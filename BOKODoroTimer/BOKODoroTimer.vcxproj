@@ -23,7 +23,7 @@
     <ProjectGuid>{4CB331E2-B8A2-494E-B7E4-DC84CC19EBB4}</ProjectGuid>
     <Keyword>MFCProj</Keyword>
     <RootNamespace>BOKODoroTimer</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -194,13 +194,16 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BOKOAddTimerName.h" />
     <ClInclude Include="BOKODoroTimer.h" />
     <ClInclude Include="BOKODoroTimerDlg.h" />
     <ClInclude Include="BOKODoroTimerListDlg.h" />
     <ClInclude Include="BOKOManager\DBManager\DBManagerManagement.h" />
+    <ClInclude Include="BOKOManager\DBManager\SelectTimerDBManager.h" />
     <ClInclude Include="BOKOManager\DBManager\TimerDBManager.h" />
     <ClInclude Include="BOKOManager\DBManager\TransactionNameDefine.h" />
     <ClInclude Include="BOKOManager\LOGManager\LogManager.h" />
+    <ClInclude Include="BOKOTimerListCtrl.h" />
     <ClInclude Include="DrawButton\CGdiPlusBitmap.h" />
     <ClInclude Include="DrawButton\GdipButton.h" />
     <ClInclude Include="DrawButton\MemDC.h" />
@@ -212,16 +215,20 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="UICustom\CustomButton.h" />
     <ClInclude Include="UICustom\CustomEdit.h" />
+    <ClInclude Include="UICustom\CustomScroll.h" />
     <ClInclude Include="UICustom\CustomStatic.h" />
     <ClInclude Include="UICustom\DlgInterface.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BOKOAddTimerName.cpp" />
     <ClCompile Include="BOKODoroTimer.cpp" />
     <ClCompile Include="BOKODoroTimerDlg.cpp" />
     <ClCompile Include="BOKODoroTimerListDlg.cpp" />
     <ClCompile Include="BOKOManager\DBManager\DBManagerManagement.cpp" />
+    <ClCompile Include="BOKOManager\DBManager\SelectTimerDBManager.cpp" />
     <ClCompile Include="BOKOManager\DBManager\TimerDBManager.cpp" />
     <ClCompile Include="BOKOManager\LOGManager\LogManager.cpp" />
+    <ClCompile Include="BOKOTimerListCtrl.cpp" />
     <ClCompile Include="DrawButton\GdipButton.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -231,6 +238,7 @@
     </ClCompile>
     <ClCompile Include="UICustom\CustomButton.cpp" />
     <ClCompile Include="UICustom\CustomEdit.cpp" />
+    <ClCompile Include="UICustom\CustomScroll.cpp" />
     <ClCompile Include="UICustom\CustomStatic.cpp" />
     <ClCompile Include="UICustom\DlgInterface.cpp" />
   </ItemGroup>
@@ -245,15 +253,32 @@
     <Image Include="res\Cal-6.png" />
     <Image Include="res\Cal.ico" />
     <Image Include="res\ETC.png" />
+    <Image Include="res\List.png" />
     <Image Include="res\Main.png" />
     <Image Include="res\Main_Green.png" />
     <Image Include="res\Main_Red.png" />
     <Image Include="res\Main_Yellow.png" />
+    <Image Include="res\NoneSound.png" />
+    <Image Include="res\NoneSound_Max.png" />
+    <Image Include="res\NoneSound_Min.png" />
+    <Image Include="res\pngwing.com.png" />
+    <Image Include="res\Sound.png" />
+    <Image Include="res\Sound_Max.png" />
+    <Image Include="res\Sound_Min.png" />
     <Image Include="res\Sub.png" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="res\Font\DS-DIGIT.TTF" />
     <Font Include="res\Font\잘풀리는하루 Medium.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="res\Sound\all_end.wav" />
+    <Media Include="res\Sound\refresh.wav" />
+    <Media Include="res\Sound\refresh_start.wav" />
+    <Media Include="res\Sound\rest.wav" />
+    <Media Include="res\Sound\rest_start.wav" />
+    <Media Include="res\Sound\work.wav" />
+    <Media Include="res\Sound\work_start.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

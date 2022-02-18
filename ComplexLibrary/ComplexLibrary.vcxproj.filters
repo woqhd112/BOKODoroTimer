@@ -120,9 +120,6 @@
     <ClInclude Include="ComplexVariant.h">
       <Filter>소스 파일</Filter>
     </ClInclude>
-    <ClInclude Include="ComplexVector.h">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
     <ClInclude Include="ComplexXMLHandler.h">
       <Filter>소스 파일</Filter>
     </ClInclude>
@@ -142,6 +139,9 @@
       <Filter>소스 파일</Filter>
     </ClInclude>
     <ClInclude Include="ComplexCondition.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ComplexVector.h">
       <Filter>소스 파일</Filter>
     </ClInclude>
   </ItemGroup>

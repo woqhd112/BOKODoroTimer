@@ -107,6 +107,7 @@ protected:
 	CBrush m_staticLightBrush;
 	CBrush m_subBKBrush;
 	CBrush m_editBrush;
+	CBrush m_buttonBrush;
 
 	COLORREF m_staticTextColor;
 	COLORREF m_buttonTextColor;

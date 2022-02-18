@@ -23,7 +23,7 @@
     <ProjectGuid>{DF876C7B-A2FE-46F7-8782-E1493C76542F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>ComplexMVC2Model</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -94,7 +94,7 @@
       <PreprocessorDefinitions>COMPLEXMVC2_MODEL_EXPORTS;WIN32;_DEBUG;COMPLEXMVC2MODEL_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)ComplexLibrary</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ComplexLibrary;$(SolutionDir)ComplexUtilProcess</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -130,7 +130,7 @@
       <PreprocessorDefinitions>COMPLEXMVC2_MODEL_EXPORTS;WIN32;NDEBUG;COMPLEXMVC2MODEL_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)ComplexLibrary</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ComplexLibrary;$(SolutionDir)ComplexUtilProcess</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -165,6 +165,7 @@
     <ClInclude Include="commonInclude.h" />
     <ClInclude Include="Control\DlgController.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Model\DAO\SelectTimerModelImp.h" />
     <ClInclude Include="Model\DAO\TimerModelImp.h" />
     <ClInclude Include="Model\DataScope\DataScope.h" />
     <ClInclude Include="Model\DataScope\DBDataKernel.h" />
@@ -172,9 +173,11 @@
     <ClInclude Include="Model\DataScope\SessionAttribute.h" />
     <ClInclude Include="Model\DlgModel.h" />
     <ClInclude Include="Model\QueryDefine.h" />
+    <ClInclude Include="Model\VO\SelectTimerVo.h" />
     <ClInclude Include="Model\VO\TimerVo.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Service\SelectTimerService.h" />
     <ClInclude Include="Service\TimerService.h" />
     <ClInclude Include="Transaction\TransactionManager.h" />
     <ClInclude Include="Transaction\TransactionProcess.h" />
@@ -182,6 +185,7 @@
   <ItemGroup>
     <ClCompile Include="Control\DlgController.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Model\DAO\SelectTimerModelImp.cpp" />
     <ClCompile Include="Model\DAO\TimerModelImp.cpp" />
     <ClCompile Include="Model\DataScope\DataScope.cpp" />
     <ClCompile Include="Model\DataScope\DBDataKernel.cpp" />
@@ -192,6 +196,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Service\SelectTimerService.cpp" />
     <ClCompile Include="Service\TimerService.cpp" />
     <ClCompile Include="Transaction\TransactionProcess.cpp" />
   </ItemGroup>
