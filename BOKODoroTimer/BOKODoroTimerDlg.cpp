@@ -3069,11 +3069,11 @@ void CBOKODoroTimerDlg::CustomRepeatProcess()
 				Log_Manager->OnPutLog("업무 시간 종료. 휴식 시간 시작", LogType::LT_EVENT);
 			}
 		}
-		else if (wkHOUR == 0 && wkMINUTE == 0 && (wkSECOND <= 5 && wkSECOND >= 1))
+		else if (wkHOUR == 0 && wkMINUTE == 0 && (wkSECOND <= START_TIMER_BEEP_SOUND_COUNT && wkSECOND >= END_TIMER_BEEP_SOUND_COUNT))
 		{
 			LoadSound(SSS_BEEP);
 		}
-		else if (wkHOUR == 0 && wkMINUTE == 0 && wkSECOND == 7)
+		else if (wkHOUR == 0 && wkMINUTE == 0 && wkSECOND == (START_TIMER_BEEP_SOUND_COUNT + 2))
 		{
 			if (m_processTimer.GetWrREPEAT() <= 1 && m_processTimer.GetAllREPEAT() > 0)
 			{
@@ -3139,11 +3139,11 @@ void CBOKODoroTimerDlg::CustomRepeatProcess()
 				Log_Manager->OnPutLog("휴식 시간 종료. 업무 시간 시작", LogType::LT_EVENT);
 			}
 		}
-		else if (rsHOUR == 0 && rsMINUTE == 0 && (rsSECOND <= 5 && rsSECOND >= 1))
+		else if (rsHOUR == 0 && rsMINUTE == 0 && (rsSECOND <= START_TIMER_BEEP_SOUND_COUNT && rsSECOND >= END_TIMER_BEEP_SOUND_COUNT))
 		{
 			LoadSound(SSS_BEEP);
 		}
-		else if (rsHOUR == 0 && rsMINUTE == 0 && rsSECOND == 7)
+		else if (rsHOUR == 0 && rsMINUTE == 0 && rsSECOND == (START_TIMER_BEEP_SOUND_COUNT + 2))
 		{
 			if (m_processTimer.GetWrREPEAT() <= 1 && m_processTimer.GetAllREPEAT() > 0)
 			{
@@ -3197,11 +3197,11 @@ void CBOKODoroTimerDlg::CustomRepeatProcess()
 				m_state = TMS_STOP;
 			}
 		}
-		else if (rfHOUR == 0 && rfMINUTE == 0 && (rfSECOND <= 5 && rfSECOND >= 1))
+		else if (rfHOUR == 0 && rfMINUTE == 0 && (rfSECOND <= START_TIMER_BEEP_SOUND_COUNT && rfSECOND >= END_TIMER_BEEP_SOUND_COUNT))
 		{
 			LoadSound(SSS_BEEP);
 		}
-		else if (rfHOUR == 0 && rfMINUTE == 0 && rfSECOND == 7)
+		else if (rfHOUR == 0 && rfMINUTE == 0 && rfSECOND == (START_TIMER_BEEP_SOUND_COUNT + 2))
 		{
 			LoadSound(SSS_WORK_START);
 		}
@@ -3271,11 +3271,11 @@ void CBOKODoroTimerDlg::InfiniteRepeatProcess()
 				}
 			}
 		}
-		else if (wkHOUR == 0 && wkMINUTE == 0 && (wkSECOND <= 5 && wkSECOND >= 1))
+		else if (wkHOUR == 0 && wkMINUTE == 0 && (wkSECOND <= START_TIMER_BEEP_SOUND_COUNT && wkSECOND >= END_TIMER_BEEP_SOUND_COUNT))
 		{
 			LoadSound(SSS_BEEP);
 		}
-		else if (wkHOUR == 0 && wkMINUTE == 0 && wkSECOND == 7)
+		else if (wkHOUR == 0 && wkMINUTE == 0 && wkSECOND == (START_TIMER_BEEP_SOUND_COUNT + 2))
 		{
 			if (m_processTimer.GetAllREPEAT() == 0)
 			{
@@ -3354,11 +3354,11 @@ void CBOKODoroTimerDlg::InfiniteRepeatProcess()
 				}
 			}
 		}
-		else if (rsHOUR == 0 && rsMINUTE == 0 && (rsSECOND <= 5 && rsSECOND >= 1))
+		else if (rsHOUR == 0 && rsMINUTE == 0 && (rsSECOND <= START_TIMER_BEEP_SOUND_COUNT && rsSECOND >= END_TIMER_BEEP_SOUND_COUNT))
 		{
 			LoadSound(SSS_BEEP);
 		}
-		else if (rsHOUR == 0 && rsMINUTE == 0 && rsSECOND == 7)
+		else if (rsHOUR == 0 && rsMINUTE == 0 && rsSECOND == (START_TIMER_BEEP_SOUND_COUNT + 2))
 		{
 			if (m_processTimer.GetAllREPEAT() == 0)
 			{
@@ -3418,11 +3418,11 @@ void CBOKODoroTimerDlg::InfiniteRepeatProcess()
 				Log_Manager->OnPutLog("쉬는 시간 종료. 업무 시간 시작", LogType::LT_EVENT);
 			}
 		}
-		else if (rfHOUR == 0 && rfMINUTE == 0 && (rfSECOND <= 5 && rfSECOND >= 1))
+		else if (rfHOUR == 0 && rfMINUTE == 0 && (rfSECOND <= START_TIMER_BEEP_SOUND_COUNT && rfSECOND >= END_TIMER_BEEP_SOUND_COUNT))
 		{
 			LoadSound(SSS_BEEP);
 		}
-		else if (rfHOUR == 0 && rfMINUTE == 0 && rfSECOND == 7)
+		else if (rfHOUR == 0 && rfMINUTE == 0 && rfSECOND == (START_TIMER_BEEP_SOUND_COUNT + 2))
 		{
 			if (m_processTimer.GetAllREPEAT() != 0)
 			{
