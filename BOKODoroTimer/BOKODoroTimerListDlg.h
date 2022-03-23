@@ -21,7 +21,7 @@ public:
 
 private:
 
-	virtual void Initialize();
+	virtual void Initialize() override;
 
 	void ReLoadTimerList();
 	void LoadTimerDBList();

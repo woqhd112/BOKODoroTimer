@@ -55,7 +55,7 @@ public:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 지원입니다.
 
 
-	virtual void Initialize();
+	virtual void Initialize() override;
 
 	void SetTimeText(TimerVO& time);
 	void SignalUpdateTimerUI();

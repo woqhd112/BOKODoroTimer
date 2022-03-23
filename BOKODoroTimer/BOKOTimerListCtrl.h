@@ -49,7 +49,7 @@ public:
 
 private:
 
-	virtual void Initialize();
+	virtual void Initialize() override;
 
 	CRect GetItemPos(int index, TimerPosFlag flag);
 

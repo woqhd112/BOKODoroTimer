@@ -27,7 +27,7 @@ private:
 
 private:
 
-	virtual void Initialize();
+	virtual void Initialize() override;
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
